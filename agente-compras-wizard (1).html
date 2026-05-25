@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente de Compras — Configuração</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue: #1A6BFF;
+  --blue-dark: #1458CC;
+  --blue-light: #EEF4FF;
+  --blue-glow: rgba(26,107,255,0.10);
+  --ink: #1A1A2E;
+  --slate: #5C6578;
+  --muted: #9BA3B4;
+  --border: #E8EAED;
+  --border-hover: #C5D3F5;
+  --bg: #F7F8FA;
+  --white: #FFFFFF;
+  --green: #00875A;
+  --green-light: #E3F5EE;
+  --orange: #B45309;
+  --orange-light: #FEF3C7;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(26,107,255,0.12);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px 80px;
+  color: var(--ink);
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 44px;
+  max-width: 800px;
+  animation: fadeDown 0.4s ease both;
+}
+.header .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.header .logo-mark {
+  width: 34px; height: 34px;
+  background: var(--blue);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.header .logo-mark svg { width: 18px; height: 18px; }
+.header .logo-name { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
+.header .logo-name span { color: var(--blue); }
+.header h1 { font-size: clamp(24px,3vw,32px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.2; }
+.header h1 em { font-style: normal; color: var(--blue); }
+.header p { margin-top: 10px; color: var(--slate); font-size: 15px; line-height: 1.6; font-weight: 400; }
+
+/* ── STEP INDICATOR ── */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 32px;
+  max-width: 800px;
+  width: 100%;
+  animation: fadeDown 0.4s ease 0.05s both;
+}
+.si-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.si-dot {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  color: var(--muted);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+.si-dot.done { background: var(--blue); border-color: var(--blue); color: white; }
+.si-dot.active { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 0 0 4px var(--blue-light); }
+.si-label { font-size: 10px; font-weight: 500; color: var(--muted); white-space: nowrap; transition: color 0.3s; }
+.si-label.active { color: var(--blue); font-weight: 600; }
+.si-line { flex: 1; height: 2px; background: var(--border); min-width: 20px; max-width: 60px; margin-bottom: 14px; transition: background 0.3s; }
+.si-line.done { background: var(--blue); }
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  width: 100%; max-width: 800px;
+  margin-bottom: 16px;
+  animation: fadeDown 0.4s ease 0.1s both;
+}
+.progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+.progress-bar { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue) 0%, #4A90FF 100%); border-radius: 4px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── CARD ── */
+.card {
+  width: 100%; max-width: 800px;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 40px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.35s ease both;
+}
+
+/* ── STEPS ── */
+.step { display: none; }
+.step.active { display: block; animation: fadeUp 0.25s ease both; }
+.step-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
+.step h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; line-height: 1.3; }
+.step .subtitle { font-size: 14px; color: var(--slate); margin-bottom: 28px; line-height: 1.6; font-weight: 400; }
+.conditional-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--orange-light); color: var(--orange); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-sm); margin-bottom: 14px; }
+
+/* ── CANAL ── */
+.canal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.canal-card { padding: 24px 16px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; text-align: center; transition: all 0.15s ease; background: var(--white); position: relative; }
+.canal-card:hover:not(.disabled) { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.canal-card.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.canal-card.disabled { opacity: 0.5; cursor: not-allowed; background: var(--bg); }
+.canal-card .canal-icon { font-size: 28px; margin-bottom: 10px; }
+.canal-card .canal-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.canal-card .canal-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+.canal-card .soon-badge { position: absolute; top: 10px; right: 10px; background: var(--orange-light); color: var(--orange); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); }
+.canal-check { width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid var(--border); margin: 10px auto 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.canal-card.selected .canal-check { background: var(--blue); border-color: var(--blue); }
+.canal-card.selected .canal-check::after { content: '✓'; color: white; font-size: 11px; font-weight: 700; }
+
+/* ── OPTIONS GRID (segmentos, plataformas) ── */
+.options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.options-grid.two-col { grid-template-columns: 1fr 1fr; }
+.option-card { padding: 18px 12px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; text-align: center; transition: all 0.15s ease; background: var(--white); position: relative; }
+.option-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.option-card.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.option-card .icon { font-size: 24px; margin-bottom: 8px; }
+.option-card .name { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.option-card .tag { font-size: 10px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+.option-card .tag.avail { color: var(--green); font-weight: 600; }
+.option-card .tag.soon { color: var(--orange); font-weight: 600; }
+.option-card.span-full { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; text-align: left; padding: 16px 20px; }
+.option-card.span-full .icon { margin-bottom: 0; font-size: 20px; }
+.option-card.span-full .name { font-size: 13px; }
+.option-card.dashed { border-style: dashed; }
+.option-card.dashed.selected { border-style: solid; }
+
+/* ── OPTIONS LIST ── */
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.15s ease; background: var(--white); }
+.option:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.option.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.option-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; transition: background 0.15s; }
+.option.selected .option-icon { background: var(--blue-glow); }
+.option-text { flex: 1; }
+.option-label { font-size: 14px; font-weight: 600; color: var(--ink); }
+.option-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.option-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--green-light); color: var(--green); white-space: nowrap; }
+.option-tag.soon { background: var(--orange-light); color: var(--orange); }
+.option-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.option.selected .option-check { background: var(--blue); border-color: var(--blue); }
+.option.selected .option-check::after { content:''; width:6px; height:6px; border-radius:50%; background:white; }
+.option.multi .option-check { border-radius: 4px; }
+.option.multi.selected .option-check::after { content:'✓'; color:white; font-size:11px; font-weight:700; width:auto; height:auto; border-radius:0; background:none; }
+
+/* ── CREDENCIAIS ── */
+.credentials-box { margin-top: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; animation: fadeUp 0.2s ease both; }
+.credentials-box .cred-title { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--slate); margin-bottom: 4px; }
+.credentials-box .cred-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+.cred-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cred-fields.single { grid-template-columns: 1fr; }
+.cred-field label { display: block; font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+.cred-input { width: 100%; padding: 9px 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: monospace; font-size: 13px; color: var(--ink); background: var(--white); outline: none; transition: all 0.15s; }
+.cred-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
+.cred-input::placeholder { color: var(--muted); font-family: 'Inter', sans-serif; }
+.cred-security { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 11px; color: var(--muted); }
+
+/* ── FEATURES COM TOOLTIP ── */
+.features-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin: 24px 0 10px; padding-top: 24px; border-top: 1px solid var(--border); }
+.features-section-title:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.features-list { display: flex; flex-direction: column; gap: 8px; }
+
+.feature-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 18px; border: 1.5px solid var(--border);
+  border-radius: var(--radius); transition: all 0.15s; background: var(--white);
+  position: relative;
+}
+.feature-item.active { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.feature-item.coming { opacity: 0.55; }
+.feature-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.feature-item.active .feature-icon { background: var(--blue-glow); }
+.feature-text { flex: 1; }
+.feature-label { font-size: 14px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.feature-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+.feature-badges { display: flex; gap: 5px; margin-top: 6px; }
+.feature-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--blue-light); color: var(--blue); }
+.feature-badge.extra { background: var(--orange-light); color: var(--orange); }
+.feature-badge.soon { background: var(--orange-light); color: var(--orange); }
+
+/* preview button */
+.preview-btn {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 10px; color: var(--muted);
+  transition: all 0.15s; flex-shrink: 0;
+  position: relative;
+}
+.preview-btn:hover { background: var(--blue); border-color: var(--blue); color: white; }
+
+/* tooltip animado */
+.feature-tooltip {
+  position: absolute;
+  left: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 260px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(-50%) translateX(-8px);
+  z-index: 100;
+}
+.feature-item:hover .feature-tooltip,
+.preview-btn:hover + .feature-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+.tooltip-header {
+  background: var(--blue);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.tooltip-header .th-avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tooltip-header .th-name { font-size: 12px; font-weight: 700; color: white; }
+.tooltip-header .th-sub { font-size: 10px; color: rgba(255,255,255,0.7); }
+.tooltip-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: #F8FAFF; }
+.tooltip-msg { display: flex; gap: 6px; align-items: flex-end; }
+.tooltip-msg.user { flex-direction: row-reverse; }
+.tooltip-msg .tm-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.tooltip-msg.user .tm-avatar { background: var(--blue); color: white; font-size: 8px; font-weight: 700; }
+.tooltip-msg .tm-bubble { padding: 7px 10px; border-radius: 10px; font-size: 11px; line-height: 1.4; max-width: 80%; }
+.tooltip-msg.agent .tm-bubble { background: white; color: var(--ink); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+.tooltip-msg.user .tm-bubble { background: var(--blue); color: white; border-bottom-right-radius: 3px; }
+.tooltip-product { background: white; border: 1px solid var(--border); border-radius: 8px; display: flex; overflow: hidden; }
+.tooltip-product .tp-img { width: 48px; height: 48px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.tooltip-product .tp-info { padding: 6px 10px; }
+.tooltip-product .tp-name { font-size: 11px; font-weight: 600; color: var(--ink); }
+.tooltip-product .tp-price { font-size: 12px; font-weight: 700; color: var(--blue); margin-top: 2px; }
+.tooltip-footer { padding: 8px 12px; background: white; border-top: 1px solid var(--border); font-size: 10px; color: var(--muted); text-align: center; font-style: italic; }
+
+/* animações do tooltip */
+@keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.tooltip-msg { animation: msgIn 0.3s ease both; }
+.tooltip-msg:nth-child(1) { animation-delay: 0.1s; }
+.tooltip-msg:nth-child(2) { animation-delay: 0.4s; }
+.tooltip-msg:nth-child(3) { animation-delay: 0.7s; }
+.tooltip-msg:nth-child(4) { animation-delay: 1.0s; }
+.tooltip-product { animation: msgIn 0.3s ease 0.8s both; }
+
+/* ── TOGGLE ── */
+.toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; margin-top: 2px; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 11px; cursor: pointer; transition: background 0.2s; }
+.toggle input:checked + .toggle-track { background: var(--blue); }
+.toggle input:disabled + .toggle-track { cursor: not-allowed; opacity: 0.5; }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform 0.2s; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+/* ── CONFIG GERAIS ── */
+.config-section { display: flex; flex-direction: column; gap: 24px; }
+.config-group label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.config-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 400; color: var(--ink); background: var(--white); outline: none; transition: all 0.15s; }
+.config-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
+.config-input::placeholder { color: var(--muted); }
+.config-hint { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; display: flex; align-items: flex-start; gap: 5px; }
+
+.tone-options { display: flex; gap: 10px; }
+.tone-btn { flex: 1; padding: 14px 10px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; text-align: center; transition: all 0.15s; background: var(--white); }
+.tone-btn:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.tone-btn.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.tone-btn .tone-emoji { font-size: 24px; display: block; margin-bottom: 8px; }
+.tone-btn .tone-label { font-size: 13px; font-weight: 700; color: var(--ink); display: block; }
+.tone-btn .tone-example { font-size: 11px; color: var(--muted); display: block; margin-top: 3px; line-height: 1.4; font-style: italic; }
+
+/* ── NAV ── */
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.btn-back { background: var(--white); border: 1.5px solid var(--border); color: var(--slate); font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 10px 22px; border-radius: var(--radius-pill); transition: all 0.15s; }
+.btn-back:hover { border-color: var(--slate); color: var(--ink); }
+.btn-back:disabled { opacity: 0; pointer-events: none; }
+.btn-next { background: var(--blue); color: white; border: none; border-radius: var(--radius-pill); padding: 11px 28px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.15s; }
+.btn-next:hover { background: var(--blue-dark); box-shadow: 0 4px 14px rgba(26,107,255,0.35); transform: translateY(-1px); }
+.btn-next:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* ── RESULTADO ── */
+.result-hero { text-align: center; padding-bottom: 28px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+.result-avatar { width: 72px; height: 72px; background: var(--blue-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; border: 3px solid var(--border-hover); }
+.result-hero h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+.result-hero h2 em { font-style: normal; color: var(--blue); }
+.result-hero p { font-size: 14px; color: var(--slate); margin-top: 6px; }
+.result-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.config-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+.config-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.config-item .ci-icon { font-size: 18px; flex-shrink: 0; }
+.config-item .ci-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+.config-item .ci-value { font-size: 13px; font-weight: 600; margin-top: 1px; }
+
+.plan-box { background: var(--blue-light); border: 1.5px solid var(--border-hover); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.plan-box-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
+.plan-rows { display: flex; flex-direction: column; gap: 8px; }
+.plan-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.plan-row .pr-label { color: var(--slate); }
+.plan-row .pr-value { font-weight: 600; color: var(--ink); }
+.plan-divider { height: 1px; background: var(--border-hover); margin: 8px 0; }
+.plan-row.total .pr-label { font-weight: 700; color: var(--ink); }
+.plan-row.total .pr-value { font-size: 18px; font-weight: 800; color: var(--blue); }
+
+.btn-contratar { width: 100%; background: var(--blue); color: white; border: none; border-radius: var(--radius-pill); padding: 14px; font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; letter-spacing: -0.1px; }
+.btn-contratar:hover { background: var(--blue-dark); box-shadow: 0 4px 14px rgba(26,107,255,0.35); transform: translateY(-1px); }
+.result-note { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
+
+/* ── SCRIPT SCREEN ── */
+.script-screen { display: none; animation: fadeUp 0.3s ease both; }
+.script-screen.active { display: block; }
+.script-hero { text-align: center; margin-bottom: 32px; }
+.script-hero .check-circle { width: 68px; height: 68px; background: var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 16px; border: 2px solid rgba(0,135,90,0.2); }
+.script-hero h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
+.script-hero h2 em { font-style: normal; color: var(--green); }
+.script-hero p { font-size: 14px; color: var(--slate); margin-top: 6px; line-height: 1.6; }
+
+/* ── PLAYGROUND ── */
+.playground-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow-md); }
+.playground-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: var(--blue); }
+.playground-title { display: flex; align-items: center; gap: 12px; }
+.pg-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid rgba(255,255,255,0.3); }
+.pg-agent-name { font-size: 14px; font-weight: 700; color: white; }
+.pg-agent-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 1px; }
+.demo-badge { background: rgba(255,255,255,0.15); color: white; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-pill); letter-spacing: 0.3px; border: 1px solid rgba(255,255,255,0.25); }
+
+.chat-messages { height: 480px; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: #F4F7FF; scroll-behavior: smooth; }
+
+.msg { display: flex; gap: 8px; animation: fadeUp 0.2s ease both; }
+.msg.user { flex-direction: row-reverse; }
+.msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; border: 1px solid var(--border); }
+.msg.user .msg-avatar { background: var(--blue); color: white; font-size: 10px; font-weight: 700; border-color: var(--blue); }
+.msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.55; }
+.msg.agent .msg-bubble { background: white; color: var(--ink); border: 1px solid var(--border); border-bottom-left-radius: 3px; box-shadow: var(--shadow); }
+.msg.user .msg-bubble { background: var(--blue); color: white; border-bottom-right-radius: 3px; }
+
+/* typing */
+.typing-indicator { display: flex; gap: 4px; align-items: center; padding: 12px 16px; }
+.typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: typingBounce 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)} }
+
+/* product grid 2 cols */
+.product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; width: 100%; max-width: 420px; }
+.product-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: all 0.15s; }
+.product-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.product-card.selected { border-color: var(--blue); border-width: 2px; }
+.pc-img { width: 100%; height: 110px; object-fit: cover; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.pc-img img { width: 100%; height: 100%; object-fit: cover; }
+.pc-info { padding: 10px; }
+.pc-badge { font-size: 9px; font-weight: 700; color: white; background: var(--blue); padding: 2px 6px; border-radius: 3px; display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.pc-name { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.pc-price { font-size: 13px; font-weight: 700; color: var(--blue); margin-top: 4px; }
+
+/* address cards */
+.address-cards { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; width: 100%; max-width: 320px; }
+.address-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: flex-start; gap: 10px; }
+.address-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.address-card.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.address-card .ac-pin { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.address-card .ac-name { font-size: 12px; font-weight: 700; color: var(--ink); }
+.address-card .ac-detail { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+/* payment cards */
+.payment-cards { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; width: 100%; max-width: 320px; }
+.payment-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px; }
+.payment-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+.payment-card.selected { border-color: var(--blue); border-width: 2px; background: var(--blue-light); }
+.payment-card .pmc-icon { width: 36px; height: 24px; background: #1A56DB; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.payment-card .pmc-icon svg { width: 20px; height: 14px; }
+.payment-card .pmc-info { flex: 1; }
+.payment-card .pmc-name { font-size: 12px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+.payment-card .pmc-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.pmc-badge { font-size: 9px; font-weight: 700; background: var(--blue-light); color: var(--blue); padding: 1px 6px; border-radius: var(--radius-pill); }
+
+/* order summary */
+.order-summary { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; margin-top: 4px; width: 100%; max-width: 320px; }
+.order-summary .os-title { font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+.order-row { display: flex; justify-content: space-between; margin-bottom: 5px; color: var(--slate); font-size: 12px; }
+.order-row.total { font-weight: 800; color: var(--ink); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 4px; font-size: 14px; }
+
+/* success */
+.success-msg { background: var(--green-light); border: 1px solid rgba(0,135,90,0.25); border-radius: var(--radius-sm); padding: 16px; text-align: center; width: 100%; max-width: 320px; }
+.success-msg .sm-icon { font-size: 28px; margin-bottom: 6px; }
+.success-msg .sm-title { font-size: 14px; font-weight: 800; color: var(--green); }
+.success-msg .sm-sub { font-size: 12px; color: var(--slate); margin-top: 4px; line-height: 1.4; }
+
+/* chat input */
+.chat-input-wrap { display: flex; gap: 8px; padding: 12px 14px; background: white; border-top: 1px solid var(--border); align-items: center; }
+.chat-mic { width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; flex-shrink: 0; transition: all 0.15s; }
+.chat-mic:hover { border-color: var(--blue); }
+.chat-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-pill); font-family: 'Inter', sans-serif; font-size: 13px; outline: none; transition: all 0.15s; color: var(--ink); }
+.chat-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
+.chat-input::placeholder { color: var(--muted); }
+.chat-send { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.chat-send:hover { background: var(--blue-dark); transform: scale(1.05); }
+
+/* script box */
+.script-box { background: #12122A; border-radius: var(--radius); padding: 18px; margin-bottom: 10px; position: relative; border: 1px solid #2A2A45; }
+.script-box pre { font-family: 'Courier New', monospace; font-size: 12px; color: #A5B4FC; white-space: pre-wrap; word-break: break-all; line-height: 1.7; }
+.script-box pre .attr { color: #86EFAC; }
+.script-box pre .val { color: #FDE68A; }
+.btn-copy { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm); padding: 5px 12px; font-size: 11px; font-weight: 600; color: white; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+.btn-copy:hover { background: rgba(255,255,255,0.2); }
+.btn-copy.copied { background: var(--green); border-color: var(--green); }
+.script-hint { font-size: 12px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.script-hint strong { color: var(--ink); }
+.platform-instructions { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+.platform-inst { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 12px; }
+.platform-inst .pi-icon { font-size: 16px; flex-shrink: 0; }
+.platform-inst .pi-text { flex: 1; color: var(--slate); line-height: 1.4; }
+.platform-inst .pi-link { font-size: 11px; font-weight: 700; color: var(--blue); text-decoration: none; white-space: nowrap; }
+.btn-painel { width: 100%; background: var(--white); color: var(--blue); border: 2px solid var(--blue); border-radius: var(--radius-pill); padding: 12px; font-size: 14px; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }
+.btn-painel:hover { background: var(--blue-light); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+/* ── CARRINHO NO CHAT ── */
+.cart-summary { background: white; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; width: 100%; max-width: 360px; margin-top: 6px; box-shadow: var(--shadow); }
+.cart-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.cart-icon { font-size: 18px; }
+.cart-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.cart-items { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+.cart-item { display: flex; align-items: center; gap: 10px; }
+.cart-item-emoji { font-size: 22px; flex-shrink: 0; }
+.cart-item-info { flex: 1; }
+.cart-item-name { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.cart-item-qty { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.cart-item-price { font-size: 13px; font-weight: 700; color: var(--blue); flex-shrink: 0; }
+.cart-item-remove { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); background: white; color: var(--muted); font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.cart-item-remove:hover { background: #FEE2E2; border-color: #FCA5A5; color: #DC2626; }
+.cart-totals { padding: 10px 14px; border-top: 1px solid var(--border); background: var(--bg); display: flex; flex-direction: column; gap: 5px; }
+.cart-total-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate); }
+.cart-total-row.total { font-size: 14px; font-weight: 800; color: var(--ink); padding-top: 6px; border-top: 1px solid var(--border); margin-top: 2px; }
+.cart-total-row.total span:last-child { color: var(--blue); }
+.cart-actions { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--border); }
+.cart-btn-primary { flex: 1; background: var(--blue); color: white; border: none; border-radius: var(--radius-pill); padding: 9px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: Inter, sans-serif; transition: all 0.15s; }
+.cart-btn-primary:hover { background: var(--blue-dark); }
+.cart-btn-secondary { background: white; color: var(--blue); border: 1.5px solid var(--blue); border-radius: var(--radius-pill); padding: 9px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: Inter, sans-serif; transition: all 0.15s; white-space: nowrap; }
+.cart-btn-secondary:hover { background: var(--blue-light); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="white" stroke-width="1.5"/><path d="M7 10h6M10 7l3 3-3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="logo-name">Cielo <span>AGP</span></span>
+  </div>
+  <h1>Configure seu <em>Agente de Compras</em></h1>
+  <p>Responda algumas perguntas e montamos o ambiente ideal para o seu negócio.</p>
+</div>
+
+<div class="step-indicator" id="step-indicator"></div>
+
+<div class="progress-wrap">
+  <div class="progress-meta"><span id="step-label">Passo 1</span><span id="pct-label">0%</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:8%"></div></div>
+</div>
+
+<div class="card" id="main-card">
+
+  <!-- 1: Segmento -->
+  <div class="step active" id="step-1">
+    <div class="step-eyebrow">Passo 1 — Tipo de negócio</div>
+    <h2>Qual é o segmento da sua loja?</h2>
+    <p class="subtitle">Vamos personalizar o agente de acordo com o seu tipo de negócio.</p>
+    <div class="options-grid">
+      <div class="option-card" data-value="moda" onclick="selectSegmento(this)"><div class="icon">👗</div><div class="name">Moda e vestuário</div></div>
+      <div class="option-card" data-value="farmacia" onclick="selectSegmento(this)"><div class="icon">💊</div><div class="name">Farmácia e saúde</div></div>
+      <div class="option-card" data-value="construcao" onclick="selectSegmento(this)"><div class="icon">🏗️</div><div class="name">Material de construção</div></div>
+      <div class="option-card" data-value="petshop" onclick="selectSegmento(this)"><div class="icon">🐾</div><div class="name">Petshop e veterinária</div></div>
+      <div class="option-card" data-value="eletronicos" onclick="selectSegmento(this)"><div class="icon">🖥️</div><div class="name">Eletrônicos e informática</div></div>
+      <div class="option-card" data-value="casa" onclick="selectSegmento(this)"><div class="icon">🏠</div><div class="name">Casa e decoração</div></div>
+      <div class="option-card" data-value="escritorio" onclick="selectSegmento(this)"><div class="icon">📦</div><div class="name">Material de escritório</div></div>
+      <div class="option-card" data-value="alimentos" onclick="selectSegmento(this)"><div class="icon">🍽️</div><div class="name">Alimentos e bebidas</div></div>
+      <div class="option-card" data-value="beleza" onclick="selectSegmento(this)"><div class="icon">💄</div><div class="name">Beleza e cosméticos</div></div>
+      <div class="option-card" data-value="esportes" onclick="selectSegmento(this)"><div class="icon">🏋️</div><div class="name">Esportes e fitness</div></div>
+      <div class="option-card" data-value="livros" onclick="selectSegmento(this)"><div class="icon">📚</div><div class="name">Livros e educação</div></div>
+      <div class="option-card" data-value="automotivo" onclick="selectSegmento(this)"><div class="icon">🚗</div><div class="name">Automotivo e peças</div></div>
+      <div class="option-card" data-value="brinquedos" onclick="selectSegmento(this)"><div class="icon">🧸</div><div class="name">Brinquedos e games</div></div>
+      <div class="option-card dashed span-full" data-value="outro" onclick="selectSegmento(this)"><div class="icon">➕</div><div class="name">Outro segmento</div><div class="tag" style="margin-left:auto">Configuração personalizada</div></div>
+    </div>
+  </div>
+
+  <!-- 2: Canal -->
+  <div class="step" id="step-2">
+    <div class="step-eyebrow">Passo 2 — Canal de atendimento</div>
+    <h2>Onde seu agente vai atender?</h2>
+    <p class="subtitle">Selecione o canal onde seus clientes vão interagir com o agente. Novos canais chegam em breve.</p>
+    <div class="canal-grid">
+      <div class="canal-card" data-value="web" onclick="selectCanal(this)">
+        <div class="canal-icon">🌐</div>
+        <div class="canal-name">Site / Web</div>
+        <div class="canal-desc">Widget de chat integrado ao seu e-commerce via script</div>
+        <div class="canal-check"></div>
+      </div>
+      <div class="canal-card disabled">
+        <div class="soon-badge">Em breve</div>
+        <div class="canal-icon">💬</div>
+        <div class="canal-name">WhatsApp</div>
+        <div class="canal-desc">Atenda via número oficial da sua loja</div>
+        <div class="canal-check"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3: Funcionalidades -->
+  <div class="step" id="step-3">
+    <div class="step-eyebrow">Passo 3 — Funcionalidades</div>
+    <h2 id="features-title">Funcionalidades para o seu segmento</h2>
+    <p class="subtitle">Ative o que faz sentido para a sua loja. Passe o mouse sobre cada item para ver como funciona no chat.</p>
+    <div id="features-container"></div>
+  </div>
+
+  <!-- 4: Personalização -->
+  <div class="step" id="step-4">
+    <div class="step-eyebrow">Passo 4 — Personalização</div>
+    <h2>Como será o seu agente?</h2>
+    <p class="subtitle">Dê uma identidade ao seu assistente e informe o endereço da sua loja.</p>
+    <div class="config-section">
+      <div class="config-group">
+        <label>URL da sua loja</label>
+        <input class="config-input" id="store-url" type="url" placeholder="https://www.minhaloja.com.br" oninput="updateConfigValid()">
+        <div class="config-hint">🎨 Vamos usar seu site para configurar automaticamente as cores e o estilo do chat.</div>
+      </div>
+      <div class="config-group">
+        <label>Nome do agente</label>
+        <input class="config-input" id="agent-name" type="text" placeholder="Ex: Luna, Max, Sofia..." maxlength="30" oninput="updateConfigValid()">
+      </div>
+      <div class="config-group">
+        <label>Tom de voz</label>
+        <div class="tone-options">
+          <div class="tone-btn" data-value="formal" onclick="selectTone(this)"><span class="tone-emoji">🎩</span><span class="tone-label">Formal</span><span class="tone-example">"Como posso auxiliá-lo?"</span></div>
+          <div class="tone-btn" data-value="neutro" onclick="selectTone(this)"><span class="tone-emoji">😊</span><span class="tone-label">Neutro</span><span class="tone-example">"Como posso ajudar?"</span></div>
+          <div class="tone-btn" data-value="descontraido" onclick="selectTone(this)"><span class="tone-emoji">🤙</span><span class="tone-label">Descontraído</span><span class="tone-example">"Oi! Bora comprar?"</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: Plataforma -->
+  <div class="step" id="step-5">
+    <div class="step-eyebrow">Passo 5 — Plataforma</div>
+    <h2>Qual plataforma você usa?</h2>
+    <p class="subtitle">Vamos verificar se a integração já está disponível para o seu e-commerce.</p>
+    <div class="options-grid">
+      <div class="option-card" data-value="nuvemshop" onclick="selectPlataforma(this)"><div class="icon">🛍️</div><div class="name">Nuvemshop</div><div class="tag avail">Plugin disponível</div></div>
+      <div class="option-card" data-value="wake" onclick="selectPlataforma(this)"><div class="icon">🌊</div><div class="name">Wake</div><div class="tag avail">Plugin disponível</div></div>
+      <div class="option-card" data-value="vtex" onclick="selectPlataforma(this)"><div class="icon">🔷</div><div class="name">VTEX</div><div class="tag avail">Plugin disponível</div></div>
+      <div class="option-card" data-value="shopify" onclick="selectPlataforma(this)"><div class="icon">🟢</div><div class="name">Shopify</div><div class="tag avail">Plugin disponível</div></div>
+      <div class="option-card" data-value="uappi" onclick="selectPlataforma(this)"><div class="icon">🚀</div><div class="name">UAPPI</div><div class="tag avail">Plugin disponível</div></div>
+      <div class="option-card" data-value="woocommerce" onclick="selectPlataforma(this)"><div class="icon">🛒</div><div class="name">WooCommerce</div><div class="tag soon">Em breve</div></div>
+      <div class="option-card dashed span-full" data-value="proprio" onclick="selectPlataforma(this)"><div class="icon">⚙️</div><div class="name">Site próprio / Outra plataforma</div><div class="tag" style="margin-left:auto">Configuração via API / SDK</div></div>
+    </div>
+  </div>
+
+  <!-- 6: Catálogo -->
+  <div class="step" id="step-6">
+    <div class="conditional-badge">⚙️ Configuração personalizada</div>
+    <div class="step-eyebrow">Passo 6 — Catálogo de produtos</div>
+    <h2>Como seu catálogo está disponível?</h2>
+    <p class="subtitle">Nosso agente precisa ler seus produtos, preços e estoque em tempo real.</p>
+    <div class="options">
+      <div class="option" data-value="api" onclick="selectOption(this,'catalogo')"><div class="option-icon">🔌</div><div class="option-text"><div class="option-label">API própria</div><div class="option-desc">Tenho uma API REST que expõe meu catálogo</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="xml" onclick="selectOption(this,'catalogo')"><div class="option-icon">📄</div><div class="option-text"><div class="option-label">Feed XML / JSON</div><div class="option-desc">Arquivo exportado periodicamente com os produtos</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="merchant" onclick="selectOption(this,'catalogo')"><div class="option-icon">🛒</div><div class="option-text"><div class="option-label">Google Merchant Center</div><div class="option-desc">Já tenho feed configurado no Google</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="manual" onclick="selectOption(this,'catalogo')"><div class="option-icon">📝</div><div class="option-text"><div class="option-label">Não tenho — vou cadastrar manualmente</div><div class="option-desc">Nossa equipe vai te ajudar a configurar</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- 7: Frete -->
+  <div class="step" id="step-7">
+    <div class="conditional-badge">⚙️ Configuração personalizada</div>
+    <div class="step-eyebrow">Passo 7 — Cálculo de frete</div>
+    <h2>Como o frete é calculado na sua loja?</h2>
+    <p class="subtitle">O agente vai informar o valor do frete durante a jornada de compra do seu cliente.</p>
+    <div class="options">
+      <div class="option" data-value="melhorenvio" onclick="selectOption(this,'frete')"><div class="option-icon">📦</div><div class="option-text"><div class="option-label">Melhor Envio</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="frenet" onclick="selectOption(this,'frete')"><div class="option-icon">🚚</div><div class="option-text"><div class="option-label">Frenet</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="correios" onclick="selectOption(this,'frete')"><div class="option-icon">📮</div><div class="option-text"><div class="option-label">Correios direto</div><div class="option-desc">Integração via API dos Correios</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="tabela" onclick="selectOption(this,'frete')"><div class="option-icon">📋</div><div class="option-text"><div class="option-label">Tabela própria de frete</div><div class="option-desc">Vou informar as regiões e valores</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="gratis" onclick="selectOption(this,'frete')"><div class="option-icon">🎁</div><div class="option-text"><div class="option-label">Frete grátis</div><div class="option-desc">Minha loja oferece frete gratuito</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- 8: Pedidos -->
+  <div class="step" id="step-8">
+    <div class="conditional-badge">⚙️ Configuração personalizada</div>
+    <div class="step-eyebrow">Passo 8 — Gestão de pedidos</div>
+    <h2>Como você gerencia seus pedidos?</h2>
+    <p class="subtitle">Quando o agente fechar uma compra, precisamos saber onde registrar o pedido.</p>
+    <div class="options">
+      <div class="option" data-value="tiny" onclick="selectOption(this,'pedidos')"><div class="option-icon">🟡</div><div class="option-text"><div class="option-label">Tiny ERP</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="bling" onclick="selectOption(this,'pedidos')"><div class="option-icon">🔵</div><div class="option-text"><div class="option-label">Bling</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="api_pedidos" onclick="selectOption(this,'pedidos')"><div class="option-icon">🔌</div><div class="option-text"><div class="option-label">Sistema próprio via API</div><div class="option-desc">Tenho uma API para receber pedidos</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="sem_sistema" onclick="selectOption(this,'pedidos')"><div class="option-icon">📋</div><div class="option-text"><div class="option-label">Não tenho sistema — gerencio manualmente</div><div class="option-desc">Vou receber os pedidos por e-mail ou painel</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- 9: Gateway + credenciais -->
+  <div class="step" id="step-9">
+    <div class="step-eyebrow">Passo — Gateway de pagamento</div>
+    <h2>Qual solução de pagamento você utiliza?</h2>
+    <p class="subtitle">Se já usa um gateway, podemos mantê-lo sem precisar trocar nada na sua operação.</p>
+    <div class="options">
+      <div class="option" data-value="cielo" onclick="selectGateway(this)"><div class="option-icon">🔵</div><div class="option-text"><div class="option-label">API Ecommerce Cielo</div><div class="option-desc">Trilho direto com a adquirente — integração nativa</div></div><div class="option-tag">Recomendado</div><div class="option-check"></div></div>
+      <div class="option" data-value="pagarme" onclick="selectGateway(this)"><div class="option-icon">💳</div><div class="option-text"><div class="option-label">Pagar.me</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="braspag" onclick="selectGateway(this)"><div class="option-icon">🏦</div><div class="option-text"><div class="option-label">Braspag</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="adyen" onclick="selectGateway(this)"><div class="option-icon">🌐</div><div class="option-text"><div class="option-label">Adyen</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="outro" onclick="selectGateway(this)"><div class="option-icon">⚙️</div><div class="option-text"><div class="option-label">Outro gateway</div><div class="option-desc">Vamos verificar a compatibilidade</div></div><div class="option-check"></div></div>
+    </div>
+    <div class="credentials-box" id="cred-box" style="display:none">
+      <div class="cred-title" id="cred-title">Credenciais</div>
+      <div class="cred-desc" id="cred-desc"></div>
+      <div class="cred-fields" id="cred-fields"></div>
+      <div class="cred-security">🔒 Suas credenciais são criptografadas e armazenadas com segurança.</div>
+    </div>
+  </div>
+
+  <!-- 10: Antifraude -->
+  <div class="step" id="step-10">
+    <div class="step-eyebrow">Passo — Antifraude</div>
+    <h2>Como você protege suas transações?</h2>
+    <p class="subtitle">Caso não tenha antifraude próprio, nosso agente já vem com camada de proteção integrada.</p>
+    <div class="options">
+      <div class="option" data-value="incluso" onclick="selectOption(this,'antifraude')"><div class="option-icon">✅</div><div class="option-text"><div class="option-label">Usar o antifraude incluso</div><div class="option-desc">Proteção nativa da plataforma, sem custo adicional</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="clearsale" onclick="selectOption(this,'antifraude')"><div class="option-icon">🛡️</div><div class="option-text"><div class="option-label">ClearSale</div><div class="option-desc">Integração nativa disponível</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="proprio" onclick="selectOption(this,'antifraude')"><div class="option-icon">🔒</div><div class="option-text"><div class="option-label">Tenho antifraude próprio</div><div class="option-desc">Vamos integrar com a sua solução atual</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- 11: Meios de pagamento -->
+  <div class="step" id="step-11">
+    <div class="step-eyebrow">Passo — Meios de pagamento</div>
+    <h2>Quais meios de pagamento deseja oferecer?</h2>
+    <p class="subtitle">Selecione um ou mais. Você poderá adicionar outros depois nas configurações.</p>
+    <div class="options">
+      <div class="option multi" data-value="credito" onclick="selectMulti(this,'pagamento')"><div class="option-icon">💳</div><div class="option-text"><div class="option-label">Cartão de crédito</div><div class="option-desc">Visa, Mastercard, Elo e outras bandeiras</div></div><div class="option-check"></div></div>
+      <div class="option multi" data-value="pix" onclick="selectMulti(this,'pagamento')"><div class="option-icon">⚡</div><div class="option-text"><div class="option-label">Pix</div><div class="option-desc">Aprovação instantânea, disponível 24h por dia</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- 12: Volume -->
+  <div class="step" id="step-12">
+    <div class="step-eyebrow">Passo — Volume</div>
+    <h2>Qual o volume médio de pedidos por mês?</h2>
+    <p class="subtitle">Isso nos ajuda a dimensionar a capacidade do agente e calcular seu plano ideal.</p>
+    <div class="options">
+      <div class="option" data-value="ate500" onclick="selectOption(this,'volume')"><div class="option-icon">🌱</div><div class="option-text"><div class="option-label">Até 500 pedidos/mês</div><div class="option-desc">Plano Starter — ideal para começar</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="500a5000" onclick="selectOption(this,'volume')"><div class="option-icon">📈</div><div class="option-text"><div class="option-label">500 a 5.000 pedidos/mês</div><div class="option-desc">Plano Crescimento — para lojas em expansão</div></div><div class="option-check"></div></div>
+      <div class="option" data-value="acima5000" onclick="selectOption(this,'volume')"><div class="option-icon">🏢</div><div class="option-text"><div class="option-label">Acima de 5.000 pedidos/mês</div><div class="option-desc">Plano Enterprise — alta disponibilidade e SLA</div></div><div class="option-check"></div></div>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="step" id="step-resultado">
+    <div class="result-hero">
+      <div class="result-avatar" id="result-avatar">🤖</div>
+      <h2 id="result-title">Seu agente está pronto!</h2>
+      <p id="result-subtitle">Confira as configurações e contrate.</p>
+    </div>
+    <div class="result-section-title">Resumo da configuração</div>
+    <div class="config-list" id="config-list"></div>
+    <div class="plan-box">
+      <div class="plan-box-title">Estimativa do plano</div>
+      <div class="plan-rows" id="plan-rows"></div>
+    </div>
+    <button class="btn-contratar" onclick="showScript()">Contratar e gerar código de instalação →</button>
+    <p class="result-note">Instalação em menos de 5 minutos. Sem necessidade de código.</p>
+  </div>
+
+  <div class="nav" id="nav-bar">
+    <button class="btn-back" id="btn-back" onclick="goBack()" disabled>← Voltar</button>
+    <button class="btn-next" id="btn-next" onclick="goNext()" disabled>Continuar →</button>
+  </div>
+</div>
+
+<!-- TELA FINAL: SCRIPT + PLAYGROUND -->
+<div class="card script-screen" id="script-screen">
+  <div class="script-hero">
+    <div class="check-circle">✅</div>
+    <h2>Tudo pronto, <em id="script-agent-name">agente</em>!</h2>
+    <p>Seu agente está configurado. Experimente abaixo como seus clientes vão interagir — depois instale no seu site.</p>
+  </div>
+
+  <!-- PLAYGROUND -->
+  <div class="result-section-title">Experimente seu agente</div>
+  <div class="playground-wrap">
+    <div class="playground-header">
+      <div class="playground-title">
+        <div class="pg-avatar" id="pg-avatar">🤖</div>
+        <div>
+          <div class="pg-agent-name" id="pg-agent-name">Agente</div>
+          <div class="pg-agent-sub">Converse com seu agente de compras</div>
+        </div>
+      </div>
+      <div class="demo-badge">🧪 Ambiente de demonstração</div>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-wrap">
+      <div class="chat-mic">🎤</div>
+      <input class="chat-input" id="chat-input" type="text" placeholder="Escreva sua mensagem..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="chat-send" onclick="sendMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <div class="result-section-title" style="margin-top:28px">Código de instalação</div>
+  <div class="script-box">
+    <button class="btn-copy" id="btn-copy" onclick="copyScript()">Copiar</button>
+    <pre id="script-code"></pre>
+  </div>
+  <p class="script-hint">Código único vinculado às suas configurações. <strong>Não compartilhe com terceiros.</strong></p>
+
+  <div class="result-section-title">Instruções por plataforma</div>
+  <div class="platform-instructions" id="platform-instructions"></div>
+
+  <button class="btn-painel" onclick="alert('Abrindo painel de controle...')">Acessar painel de controle →</button>
+</div>
+
+<script>
+// ── DADOS ──
+const CROSS_FEATURES = [
+  { id:'upload_img', icon:'📸', label:'Upload de imagem', desc:'Cliente envia foto e o agente encontra o produto correspondente no catálogo', included:true, extra:false, coming:false,
+    tooltip: { msgs: [
+      { type:'user', text:'Quero algo parecido com isso 📷', img:null },
+      { type:'agent', text:'Que look incrível! Encontrei produtos similares na nossa loja:' },
+      { type:'product', emoji:'👗', name:'Vestido Midi Similar', price:'R$ 189,90' },
+    ], footer:'Cliente envia foto → agente busca produtos similares' }
+  },
+  { id:'combo', icon:'🔀', label:'Combo de sugestões', desc:'Agente analisa o carrinho e sugere produtos complementares por afinidade', included:true, extra:false, coming:false,
+    tooltip: { msgs: [
+      { type:'agent', text:'Adicionei a furadeira ao carrinho! ✓' },
+      { type:'agent', text:'Que tal levar também? Combina muito com sua escolha:' },
+      { type:'product', emoji:'🔩', name:'Kit de Brocas 20 peças', price:'R$ 49,90' },
+    ], footer:'Agente sugere produtos complementares automaticamente' }
+  },
+  { id:'substituicao', icon:'🔄', label:'Substituição de produtos', desc:'Se o item buscado não está disponível, o agente sugere automaticamente um similar', included:true, extra:false, coming:false,
+    tooltip: { msgs: [
+      { type:'user', text:'Quero a calça jeans modelo slim azul' },
+      { type:'agent', text:'Esse modelo está sem estoque, mas encontrei uma opção muito similar:' },
+      { type:'product', emoji:'👖', name:'Calça Jeans Skinny Azul', price:'R$ 149,90' },
+    ], footer:'Item indisponível → agente sugere alternativa similar' }
+  },
+  { id:'audio', icon:'🎙️', label:'Interação por áudio', desc:'Cliente fala com o agente em vez de digitar — ideal para mobile', included:false, extra:false, coming:true,
+    tooltip: { msgs: [
+      { type:'user', text:'🎤 "quero um tênis para corrida"' },
+      { type:'agent', text:'Entendi! Encontrei ótimas opções de tênis para corrida pra você:' },
+      { type:'product', emoji:'👟', name:'Tênis Running Pro', price:'R$ 349,00' },
+    ], footer:'Em breve: cliente fala e o agente responde' }
+  },
+];
+
+const SEGMENT_FEATURES = {
+  moda:{ label:'Moda e Vestuário', emoji:'👗', features:[
+    { id:'tryon', icon:'🪞', label:'Provador virtual (try on)', desc:'IA aplica a roupa em foto enviada pelo cliente para experimentar virtualmente', included:true, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Posso ver como fica essa blusa em mim?'},{type:'agent',text:'Claro! Me manda uma foto sua de frente e eu mostro como fica 😊'},{type:'user',text:'[foto enviada]'},{type:'agent',text:'Aqui está! A blusa ficou incrível em você ✨'}], footer:'Cliente envia foto → IA aplica a peça virtualmente' }},
+    { id:'guia_tamanho', icon:'📏', label:'Sugestão de tamanho', desc:'Agente auxilia o cliente a identificar o tamanho ideal com base em medidas', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Não sei qual tamanho pedir, tenho 1,68m e 65kg'},{type:'agent',text:'Com suas medidas, recomendo o tamanho M! A tabela da marca indica P até 60kg e M até 70kg 📏'}], footer:'Agente calcula o tamanho ideal pelo perfil do cliente' }},
+    { id:'lookbook', icon:'✨', label:'Lookbook interativo', desc:'Monte combinações e inspire seus clientes com looks completos', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Me sugere um look casual para o dia a dia?'},{type:'agent',text:'Adorei! Montei esse look pra você:'},{type:'product',emoji:'👚',name:'Blusa + Calça + Tênis',price:'R$ 329,70'}], footer:'Agente monta looks completos e coordenados' }},
+    { id:'recompra', icon:'🔁', label:'Recompra inteligente', desc:'Lembra o cliente de produtos favoritos e sugere reposição', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Oi! Você comprou a Blusa de Linho há 3 meses. Temos novidades na mesma linha:'},{type:'product',emoji:'👚',name:'Blusa de Linho Nova Coleção',price:'R$ 99,90'}], footer:'Agente sugere recompra baseado no histórico' }},
+  ]},
+  farmacia:{ label:'Farmácia e Saúde', emoji:'💊', features:[
+    { id:'receita', icon:'📋', label:'Receita digital (Mevo / Memed)', desc:'IA valida assinatura digital do médico. Tarja preta exige retenção física', included:true, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Preciso de Amoxicilina 500mg, tenho receita digital'},{type:'agent',text:'Perfeito! Vou validar sua receita digital pelo Memed. Me envie o código de verificação 📋'}], footer:'Agente valida receita digital automaticamente' }},
+    { id:'similares', icon:'🔬', label:'Oferta de similares e genéricos', desc:'Consulta princípios ativos e sugere similares ou genéricos', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero Dorflex'},{type:'agent',text:'Encontrei o Dorflex e também opções genéricas com o mesmo efeito por menos:'},{type:'product',emoji:'💊',name:'Dipirona + Orfenadrina Gen.',price:'R$ 8,90'}], footer:'Agente sugere genéricos equivalentes mais baratos' }},
+    { id:'controlados', icon:'🔒', label:'Alerta de produtos controlados', desc:'Agente informa requisitos legais antes de adicionar ao carrinho', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero Rivotril 2mg'},{type:'agent',text:'⚠️ Este medicamento é controlado. Para finalizar a compra, você precisará apresentar receita médica em 2 vias. Deseja continuar?'}], footer:'Agente alerta sobre exigências legais automaticamente' }},
+    { id:'reposicao', icon:'🔁', label:'Lembrete de reposição', desc:'Notifica quando é hora de repor medicamentos de uso contínuo', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Oi! Você comprou Losartana 50mg há 30 dias. Está na hora de repor? 💊'},{type:'user',text:'Sim! Me manda de novo'},{type:'agent',text:'Perfeito, adicionei ao carrinho ✓'}], footer:'Agente lembra automaticamente de medicamentos contínuos' }},
+  ]},
+  construcao:{ label:'Material de Construção', emoji:'🏗️', features:[
+    { id:'calculadora', icon:'🧮', label:'Calculadora de materiais', desc:'Cliente informa a área e o agente calcula a quantidade necessária', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Preciso pintar uma sala de 20m²'},{type:'agent',text:'Para 20m² você vai precisar de aproximadamente 2 latas de 18L (rende 10m²/L com 2 demãos). Encontrei as melhores opções:'},{type:'product',emoji:'🪣',name:'Tinta Acrílica Premium 18L',price:'R$ 189,00'}], footer:'Agente calcula a quantidade exata de materiais' }},
+    { id:'lista_obra', icon:'📋', label:'Lista de obra', desc:'Monte e gerencie listas de materiais por etapa da construção', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero montar uma lista para a etapa de acabamento'},{type:'agent',text:'Ótimo! Vou criar sua lista de acabamento. Quais cômodos você vai acabar?'}], footer:'Agente organiza materiais por etapa da obra' }},
+    { id:'orcamento', icon:'💰', label:'Orçamento por projeto', desc:'Agente monta orçamento completo com todos os itens', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero um orçamento para reformar um banheiro de 4m²'},{type:'agent',text:'Calculei tudo! O orçamento para o banheiro inclui revestimento, piso, rejunte e cola: Total estimado R$ 1.240,00 🧱'}], footer:'Agente monta orçamento completo por projeto' }},
+  ]},
+  petshop:{ label:'Petshop e Veterinária', emoji:'🐾', features:[
+    { id:'perfil_pet', icon:'🐶', label:'Perfil do pet + compra recorrente', desc:'Agente recomenda produtos baseado no perfil do pet cadastrado', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Preciso de ração para meu cachorro'},{type:'agent',text:'Olá! Para o Rex (Golden, 3 anos, 32kg), recomendo a ração que você costuma comprar:'},{type:'product',emoji:'🐶',name:'Ração Golden Adulto 15kg',price:'R$ 189,90'}], footer:'Agente usa o perfil do pet para recomendar' }},
+    { id:'vacina', icon:'💉', label:'Lembrete de vacina e medicação', desc:'Notifica quando está na hora de vacinar ou repor medicamento', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'🐾 Oi! O Rex está na hora da vacina V10 anual. Quer agendar ou comprar antiparasitário para aplicação em casa?'}], footer:'Agente lembra automaticamente de vacinas e medicamentos' }},
+    { id:'assinatura', icon:'📦', label:'Assinatura de ração', desc:'Cliente programa entrega recorrente com desconto', included:false, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero receber ração todo mês'},{type:'agent',text:'Perfeito! Ativei a assinatura mensal da Ração Golden 15kg. Você terá 10% de desconto e entrega grátis todo mês 📦'}], footer:'Agente configura entrega recorrente com desconto' }},
+  ]},
+  eletronicos:{ label:'Eletrônicos e Informática', emoji:'🖥️', features:[
+    { id:'comparador', icon:'⚖️', label:'Comparador técnico', desc:'Compara especificações de produtos lado a lado', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Qual a diferença entre o SSD 500GB e o 1TB?'},{type:'agent',text:'Comparando os dois: SSD 500GB → R$219 | 500GB | 3200MB/s. SSD 1TB → R$389 | 1000GB | 3500MB/s. O 1TB tem melhor custo-benefício! ⚖️'}], footer:'Agente compara especificações técnicas lado a lado' }},
+    { id:'garantia', icon:'🛡️', label:'Garantia estendida', desc:'Agente oferta extensão de garantia no momento da compra', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Ótima escolha! O fone tem 1 ano de garantia. Quer estender para 2 anos por apenas R$49,90? Cobre defeitos de fabricação e danos acidentais 🛡️'}], footer:'Agente oferece garantia estendida no momento certo' }},
+    { id:'tradein', icon:'♻️', label:'Trade-in', desc:'Cliente informa o aparelho antigo e recebe desconto no novo', included:false, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Tenho um fone antigo JBL para trocar'},{type:'agent',text:'Avaliamos seu JBL em R$80,00 de desconto! Quer aplicar na compra do novo fone? ♻️'}], footer:'Agente avalia o produto antigo e aplica desconto' }},
+  ]},
+  casa:{ label:'Casa e Decoração', emoji:'🏠', features:[
+    { id:'simulador', icon:'🏡', label:'Simulador de ambiente (AR)', desc:'Cliente vê como o produto fica no próprio ambiente', included:true, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero ver como esse sofá fica na minha sala'},{type:'agent',text:'Que legal! Me envie uma foto da sua sala que eu mostro como o sofá ficaria no ambiente 🏡'}], footer:'Cliente envia foto do ambiente → IA renderiza o produto' }},
+    { id:'lista_presentes', icon:'🎁', label:'Lista de casamento e presentes', desc:'Monte e compartilhe listas de desejo para ocasiões especiais', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero criar uma lista de casamento'},{type:'agent',text:'Que animado! Vou criar sua lista. Você pode compartilhar o link com os convidados. Vamos começar pelos itens mais importantes? 🎁'}], footer:'Agente cria lista compartilhável de presentes' }},
+    { id:'reposicao', icon:'🔁', label:'Reposição inteligente', desc:'Lembra o cliente de produtos consumíveis', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Olá! Você comprou velas aromáticas há 45 dias. Hora de repor? Temos novidades na linha que você gosta 🕯️'}], footer:'Agente lembra de repor produtos consumíveis' }},
+  ]},
+  escritorio:{ label:'Material de Escritório', emoji:'📦', features:[
+    { id:'lista_material', icon:'📸', label:'Lista de materiais por foto ou arquivo', desc:'Cliente envia foto ou arquivo e o agente busca tudo de uma vez', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'[foto de lista de materiais enviada]'},{type:'agent',text:'Identifiquei 8 itens na sua lista! Papel A4, canetas, grampeador... Posso adicionar tudo ao carrinho de uma vez? 📋'}], footer:'Cliente envia foto da lista → agente adiciona tudo ao carrinho' }},
+    { id:'pedido_recorrente', icon:'🔄', label:'Pedido recorrente', desc:'Empresa configura reposição automática mensal de insumos', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero configurar reposição mensal dos materiais de escritório'},{type:'agent',text:'Perfeito! Configurei a reposição mensal dos 12 itens do seu padrão. Todo dia 1° o pedido será feito automaticamente 🔄'}], footer:'Agente automatiza a reposição mensal de insumos' }},
+    { id:'lista_corporativa', icon:'⭐', label:'Lista corporativa', desc:'Time monta lista de necessidades e gestor aprova o pedido', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero que minha equipe possa solicitar materiais'},{type:'agent',text:'Entendido! Criei um link de solicitação para sua equipe. Você receberá as solicitações para aprovação antes de finalizar o pedido ✅'}], footer:'Time solicita → gestor aprova → agente finaliza o pedido' }},
+  ]},
+  alimentos:{ label:'Alimentos e Bebidas', emoji:'🍽️', features:[
+    { id:'dieta', icon:'🥗', label:'Filtro por dieta e restrição', desc:'Cliente filtra por vegano, sem glúten, sem lactose e outras restrições', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Sou vegano e intolerante ao glúten'},{type:'agent',text:'Filtrei os produtos para você! Mostrando apenas itens 100% veganos e sem glúten 🥗'}], footer:'Agente filtra produtos por restrições alimentares' }},
+    { id:'receitas', icon:'👨‍🍳', label:'Sugestão de receitas', desc:'Agente sugere receitas com os produtos do carrinho', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Você tem azeite, tomate e macarrão no carrinho. Que tal fazer um Aglio e Olio? Me envio a receita completa? 👨‍🍳'}], footer:'Agente sugere receitas com os produtos escolhidos' }},
+    { id:'assinatura', icon:'📦', label:'Clube de assinatura', desc:'Cliente assina caixas temáticas mensais', included:false, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero receber vinhos todo mês'},{type:'agent',text:'Perfeito! O Clube do Vinho traz 3 garrafas selecionadas por sommeliers. Primeira caixa com 20% de desconto! 🍷'}], footer:'Agente configura assinatura mensal de produtos' }},
+  ]},
+  beleza:{ label:'Beleza e Cosméticos', emoji:'💄', features:[
+    { id:'quiz_pele', icon:'✨', label:'Quiz de tipo de pele', desc:'Agente recomenda produtos com base no perfil do cliente', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero um sérum mas não sei qual'},{type:'agent',text:'Vamos descobrir! Sua pele é mais oleosa ou seca? Tem manchas ou preocupação com rugas?'},{type:'agent',text:'Com base no seu perfil (pele mista, manchas), recomendo o Sérum Vitamina C ✨'}], footer:'Agente faz quiz e recomenda produtos personalizados' }},
+    { id:'assinatura', icon:'📦', label:'Assinatura de produtos', desc:'Receba seus favoritos mensalmente com desconto', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero receber minha maquiagem todo mês'},{type:'agent',text:'Que ótimo! Ativei a assinatura dos seus 5 produtos favoritos. Entrega mensal com 15% de desconto e frete grátis 💄'}], footer:'Agente configura entrega recorrente com desconto' }},
+    { id:'recompra', icon:'🔁', label:'Recompra inteligente', desc:'Lembra o cliente quando o produto está acabando', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'agent',text:'Olá! O seu Sérum Vitamina C (30ml) já deve estar acabando — você comprou há 45 dias. Quer repor? 💊'}], footer:'Agente calcula quando o produto vai acabar e avisa' }},
+  ]},
+  esportes:{ label:'Esportes e Fitness', emoji:'🏋️', features:[
+    { id:'calc_medidas', icon:'📏', label:'Calculadora de medidas', desc:'Indica o tamanho certo de equipamentos e roupas esportivas', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Qual tamanho de legging para 1,65m e 58kg?'},{type:'agent',text:'Com suas medidas, o tamanho P é o ideal para o modelo que você escolheu! A cintura ajusta bem entre 60-68cm 📏'}], footer:'Agente calcula o tamanho ideal para esportes' }},
+    { id:'plano_treino', icon:'💪', label:'Plano de treino integrado', desc:'Agente sugere produtos com base no objetivo de treino', included:false, extra:true, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero emagrecer e ganhar massa ao mesmo tempo'},{type:'agent',text:'Para seu objetivo, recomendo: Whey Protein + BCAA + Tapete de Yoga. Montei um kit com 10% de desconto! 💪'}], footer:'Agente sugere produtos baseados no objetivo do cliente' }},
+  ]},
+  livros:{ label:'Livros e Educação', emoji:'📚', features:[
+    { id:'recomendacao', icon:'🤖', label:'Recomendação por perfil', desc:'Agente sugere livros com base no histórico e preferências', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Acabei de ler Sapiens e adorei!'},{type:'agent',text:'Que ótima escolha! Para quem curtiu Sapiens, recomendo muito:'},{type:'product',emoji:'📘',name:'21 Lições para o Séc. 21',price:'R$ 49,90'}], footer:'Agente recomenda com base no que o cliente já leu' }},
+    { id:'lista_leitura', icon:'📖', label:'Lista de leitura', desc:'Cliente monta e compartilha sua lista de próximas leituras', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero montar minha lista de leitura para 2025'},{type:'agent',text:'Que legal! Criei sua lista "Leituras 2025". Já adicionei os 3 livros que você comentou. Quer compartilhar com alguém? 📚'}], footer:'Agente cria e organiza lista de leitura personalizada' }},
+  ]},
+  automotivo:{ label:'Automotivo e Peças', emoji:'🚗', features:[
+    { id:'compatibilidade', icon:'🔧', label:'Verificador de compatibilidade', desc:'Cliente informa modelo, ano ou placa — agente exibe apenas peças compatíveis', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Preciso de filtro de ar para meu Corolla 2019'},{type:'agent',text:'Consultei a tabela de compatibilidade! Para o Corolla 2019 2.0 (motor 3ZR), as peças compatíveis são:'},{type:'product',emoji:'🔩',name:'Filtro Ar Fram CA10755',price:'R$ 34,90'}], footer:'Agente verifica compatibilidade pelo modelo/placa do veículo' }},
+    { id:'orcamento_revisao', icon:'💰', label:'Orçamento de revisão', desc:'Agente monta pacote de peças para revisão do veículo', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Preciso fazer a revisão de 10.000km do meu Civic'},{type:'agent',text:'Montei o kit de revisão 10.000km para o Civic: óleo, filtros e vela. Total: R$ 189,00 com 8% de desconto 🔧'}], footer:'Agente monta kit completo de revisão por modelo' }},
+  ]},
+  brinquedos:{ label:'Brinquedos e Games', emoji:'🧸', features:[
+    { id:'faixa_etaria', icon:'👶', label:'Filtro por faixa etária', desc:'Agente recomenda brinquedos adequados para a idade da criança', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero um presente para minha filha de 4 anos'},{type:'agent',text:'Filtrei brinquedos seguros e indicados para 3-5 anos. Mais populares agora:'},{type:'product',emoji:'🪆',name:'Boneca Interativa Fala e Ri',price:'R$ 189,00'}], footer:'Agente filtra brinquedos pela faixa etária da criança' }},
+    { id:'lista_aniversario', icon:'🎁', label:'Lista de aniversário', desc:'Criança monta lista e compartilha com familiares', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero criar uma lista de aniversário para minha filha'},{type:'agent',text:'Que fofo! Criei a lista da Maria, 5 anos 🎂. Compartilhe o link com os familiares para eles escolherem o presente! 🎁'}], footer:'Criança monta lista → família acessa pelo link' }},
+  ]},
+  outro:{ label:'Outro segmento', emoji:'🏪', features:[
+    { id:'lista_desejos', icon:'⭐', label:'Lista de desejos', desc:'Cliente salva produtos favoritos para comprar depois', included:true, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Gostei desse produto mas não posso comprar agora'},{type:'agent',text:'Salvei na sua lista de desejos! Você receberá um aviso se o preço baixar ou o estoque estiver acabando ⭐'}], footer:'Agente salva produtos favoritos e monitora preço' }},
+    { id:'recompra', icon:'🔁', label:'Recompra com 1 clique', desc:'Cliente repete pedidos anteriores com facilidade', included:false, extra:false, coming:false,
+      tooltip:{ msgs:[{type:'user',text:'Quero repetir meu último pedido'},{type:'agent',text:'Seu último pedido (3 itens, R$ 247,80) foi em 15/04. Quer repetir exatamente igual? 🔁'}], footer:'Agente repete pedidos anteriores com 1 confirmação' }},
+  ]},
+};
+
+const GATEWAY_CREDS = {
+  cielo: { title:'Credenciais API Ecommerce Cielo', desc:'Encontre suas credenciais no portal Cielo para desenvolvedores.', single:false,
+    fields:[{id:'ec',label:'Número do EC (Estabelecimento Comercial)',placeholder:'Ex: 1000000001'},{id:'merchant_key',label:'Merchant Key',placeholder:'Ex: 0123456789ABCDEF...'},{id:'merchant_id',label:'Merchant ID',placeholder:'Ex: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'}]},
+  pagarme: { title:'Credenciais Pagar.me', desc:'Encontre sua API Key em Dashboard → Configurações → Chaves de API.', single:true,
+    fields:[{id:'api_key',label:'API Key',placeholder:'sk_live_...'}]},
+  braspag: { title:'Credenciais Braspag', desc:'Encontre sua API Key no painel Braspag.', single:true,
+    fields:[{id:'api_key',label:'API Key',placeholder:'Sua API Key Braspag'}]},
+  adyen: { title:'Credenciais Adyen', desc:'Encontre suas credenciais em Developers → API credentials no painel Adyen.', single:false,
+    fields:[{id:'api_key',label:'API Key',placeholder:'AQE...'},{id:'merchant_account',label:'Merchant Account',placeholder:'SuaLojaCOM'}]},
+  outro: { title:'Credenciais do gateway', desc:'Informe a credencial principal do seu gateway. Nosso time vai validar a compatibilidade.', single:true,
+    fields:[{id:'api_key',label:'API Key / Credencial principal',placeholder:'Sua chave de acesso'}]},
+};
+
+const PLATFORM_INSTRUCTIONS = {
+  nuvemshop:{icon:'🛍️',name:'Nuvemshop',text:'Configurações → Código de rastreio → cole no campo "Cabeçalho da loja".'},
+  wake:{icon:'🌊',name:'Wake',text:'Painel Wake → Tema → Editar HTML → cole antes do </body>.'},
+  vtex:{icon:'🔷',name:'VTEX',text:'Admin VTEX → Store → Checkout → Edit → Scripts.'},
+  shopify:{icon:'🟢',name:'Shopify',text:'Online Store → Themes → Edit code → theme.liquid → antes do </body>.'},
+  uappi:{icon:'🚀',name:'UAPPI',text:'Painel UAPPI → Configurações → Scripts personalizados.'},
+  woocommerce:{icon:'🛒',name:'WooCommerce',text:'Plugin "Insert Headers and Footers" → seção Footer.'},
+  proprio:{icon:'⚙️',name:'Site próprio',text:'Cole no HTML de todas as páginas, antes do fechamento da tag </body>.'},
+};
+
+const VOLUME_PLANS = {
+  ate500:{label:'Plano Starter',sessions:'1.000',price:'R$ 0,15',total:'R$ 150,00/mês'},
+  '500a5000':{label:'Plano Crescimento',sessions:'5.000',price:'R$ 0,13',total:'R$ 650,00/mês'},
+  acima5000:{label:'Plano Enterprise',sessions:'20.000',price:'R$ 0,10',total:'R$ 2.000,00/mês'},
+};
+
+const LABELS = {
+  canal:{web:'Site / Web',whatsapp:'WhatsApp'},
+  plataforma:{nuvemshop:'Nuvemshop',wake:'Wake',vtex:'VTEX',shopify:'Shopify',uappi:'UAPPI',woocommerce:'WooCommerce',proprio:'Site próprio'},
+  catalogo:{api:'API própria',xml:'Feed XML / JSON',merchant:'Google Merchant Center',manual:'Cadastro manual'},
+  frete:{melhorenvio:'Melhor Envio',frenet:'Frenet',correios:'Correios',tabela:'Tabela própria',gratis:'Frete grátis'},
+  pedidos:{tiny:'Tiny ERP',bling:'Bling',api_pedidos:'Sistema próprio via API',sem_sistema:'Gerenciamento manual'},
+  gateway:{cielo:'API Ecommerce Cielo',pagarme:'Pagar.me',braspag:'Braspag',adyen:'Adyen',outro:'Outro gateway'},
+  antifraude:{incluso:'Antifraude incluso',clearsale:'ClearSale',proprio:'Antifraude próprio'},
+  pagamento:{credito:'Cartão de crédito',pix:'Pix'},
+  volume:{ate500:'Até 500/mês','500a5000':'500–5.000/mês',acima5000:'Acima de 5.000/mês'},
+  tom:{formal:'Formal',neutro:'Neutro',descontraido:'Descontraído'},
+};
+
+const CATALOG = {
+  moda:[
+    {id:'p1',name:'Vestido Midi Floral',price:'R$ 189,90',emoji:'👗',img:'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Calça Jeans Skinny',price:'R$ 149,90',emoji:'👖',img:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Blusa de Linho P/M/G',price:'R$ 89,90',emoji:'👚',img:'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Tênis Casual Branco',price:'R$ 229,90',emoji:'👟',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop'},
+    {id:'p5',name:'Relógio Analógico Dourado',price:'R$ 349,90',emoji:'⌚',img:'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=300&h=300&fit=crop'},
+    {id:'p6',name:'Bolsa Couro Transversal',price:'R$ 279,90',emoji:'👜',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=300&h=300&fit=crop'},
+    {id:'p7',name:'Jaqueta Jeans Oversized',price:'R$ 199,90',emoji:'🧥',img:'https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=300&h=300&fit=crop'},
+    {id:'p8',name:'Óculos de Sol Redondo',price:'R$ 129,90',emoji:'🕶️',img:'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=300&h=300&fit=crop'},
+  ],
+  farmacia:[
+    {id:'p1',name:'Dipirona 500mg cx20',price:'R$ 12,90',emoji:'💊',img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Vitamina C 1g Efervescente',price:'R$ 18,50',emoji:'🍋',img:'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Protetor Solar FPS 50',price:'R$ 42,90',emoji:'🧴',img:'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Termômetro Digital',price:'R$ 34,90',emoji:'🌡️',img:'https://images.unsplash.com/photo-1584982751601-97ddc0e2f0a9?w=300&h=300&fit=crop'},
+  ],
+  construcao:[
+    {id:'p1',name:'Tinta Acrílica Branca 18L',price:'R$ 189,00',emoji:'🪣',img:'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Porcelanato 60x60cm',price:'R$ 87,90',emoji:'🏗️',img:'https://images.unsplash.com/photo-1615971677499-5467cbab01c0?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Cimento CP II 50kg',price:'R$ 38,50',emoji:'🧱',img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Furadeira de Impacto 750W',price:'R$ 349,00',emoji:'🔧',img:'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=300&h=300&fit=crop'},
+  ],
+  petshop:[
+    {id:'p1',name:'Ração Golden Adulto 15kg',price:'R$ 189,90',emoji:'🐶',img:'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Coleira Anti-pulgas',price:'R$ 49,90',emoji:'🦮',img:'https://images.unsplash.com/photo-1601758003122-53c40e686a19?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Casinha de Madeira M',price:'R$ 219,00',emoji:'🏠',img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Shampoo Pet Neutro 500ml',price:'R$ 28,90',emoji:'🛁',img:'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=300&h=300&fit=crop'},
+  ],
+  eletronicos:[
+    {id:'p1',name:'Fone Bluetooth ANC',price:'R$ 499,00',emoji:'🎧',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop'},
+    {id:'p2',name:'SSD 1TB NVMe',price:'R$ 389,00',emoji:'💾',img:'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Webcam Full HD 1080p',price:'R$ 249,00',emoji:'📷',img:'https://images.unsplash.com/photo-1587826080692-f439cd0b70a1?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Carregador 65W USB-C GaN',price:'R$ 189,00',emoji:'🔌',img:'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300&h=300&fit=crop'},
+  ],
+  casa:[
+    {id:'p1',name:'Sofá 3 Lugares Veludo',price:'R$ 1.890,00',emoji:'🛋️',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Luminária de Mesa',price:'R$ 189,00',emoji:'💡',img:'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Quadro Decorativo 60x80cm',price:'R$ 129,00',emoji:'🖼️',img:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Jogo de Cama Queen 200fios',price:'R$ 219,00',emoji:'🛏️',img:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=300&h=300&fit=crop'},
+  ],
+  escritorio:[
+    {id:'p1',name:'Resma Papel A4 500fls',price:'R$ 28,90',emoji:'📄',img:'https://images.unsplash.com/photo-1568740405952-1f4ade23e775?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Caneta Esferográfica cx50',price:'R$ 34,90',emoji:'🖊️',img:'https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Grampeador de Mesa',price:'R$ 42,00',emoji:'🖇️',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf6796?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Pasta Arquivo cx10',price:'R$ 38,50',emoji:'🗂️',img:'https://images.unsplash.com/photo-1568581146005-81c4e0b2c5b3?w=300&h=300&fit=crop'},
+  ],
+  alimentos:[
+    {id:'p1',name:'Azeite Extravirgem 500ml',price:'R$ 54,90',emoji:'🫒',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Granola Orgânica 500g',price:'R$ 32,90',emoji:'🌾',img:'https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Whey Protein Chocolate 900g',price:'R$ 149,00',emoji:'💪',img:'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Kit Especiarias Gourmet',price:'R$ 89,00',emoji:'🌶️',img:'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=300&h=300&fit=crop'},
+  ],
+  beleza:[
+    {id:'p1',name:'Sérum Vitamina C 30ml',price:'R$ 89,90',emoji:'✨',img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Batom Matte Nude',price:'R$ 49,90',emoji:'💄',img:'https://images.unsplash.com/photo-1583241475880-083f84372725?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Máscara Capilar 500g',price:'R$ 64,90',emoji:'💆',img:'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Perfume Floral EDP 75ml',price:'R$ 189,00',emoji:'🌸',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&h=300&fit=crop'},
+  ],
+  esportes:[
+    {id:'p1',name:'Tênis Running Leve',price:'R$ 349,00',emoji:'👟',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Legging Compressão',price:'R$ 129,00',emoji:'🩱',img:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Garrafa Térmica 750ml',price:'R$ 89,00',emoji:'🧴',img:'https://images.unsplash.com/photo-1523362628745-0c100150b504?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Tapete de Yoga 6mm',price:'R$ 149,00',emoji:'🧘',img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop'},
+  ],
+  livros:[
+    {id:'p1',name:'O Poder do Hábito',price:'R$ 49,90',emoji:'📗',img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Sapiens',price:'R$ 54,90',emoji:'📘',img:'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Mindset',price:'R$ 44,90',emoji:'📙',img:'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=300&fit=crop'},
+    {id:'p4',name:'A Startup Enxuta',price:'R$ 52,90',emoji:'📕',img:'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=300&h=300&fit=crop'},
+  ],
+  automotivo:[
+    {id:'p1',name:'Óleo Motor 5W30 4L',price:'R$ 89,90',emoji:'🛢️',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Filtro de Ar Universal',price:'R$ 34,90',emoji:'🔩',img:'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Palheta Dianteira Par',price:'R$ 49,90',emoji:'🚗',img:'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Câmera de Ré 4,3"',price:'R$ 189,00',emoji:'📹',img:'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=300&h=300&fit=crop'},
+  ],
+  brinquedos:[
+    {id:'p1',name:'LEGO City 766 peças',price:'R$ 349,00',emoji:'🧱',img:'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Boneca Interativa',price:'R$ 189,00',emoji:'🪆',img:'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Carrinho Controle Remoto',price:'R$ 249,00',emoji:'🏎️',img:'https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?w=300&h=300&fit=crop'},
+    {id:'p4',name:'Banco Imobiliário Clássico',price:'R$ 129,00',emoji:'🎲',img:'https://images.unsplash.com/photo-1606503153255-59d8b8b82176?w=300&h=300&fit=crop'},
+  ],
+  outro:[
+    {id:'p1',name:'Produto Destaque #1',price:'R$ 99,90',emoji:'⭐',img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop'},
+    {id:'p2',name:'Produto Destaque #2',price:'R$ 149,90',emoji:'🏆',img:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=300&fit=crop'},
+    {id:'p3',name:'Produto Destaque #3',price:'R$ 79,90',emoji:'💎',img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=300&h=300&fit=crop'},
+  ],
+};
+
+const TONE_SYSTEM = {
+  formal:'Você é um assistente de compras sofisticado e formal. Use linguagem culta, "você" no tratamento e evite gírias. Seja preciso e profissional.',
+  neutro:'Você é um assistente de compras simpático e prestativo. Use linguagem clara, direta e amigável.',
+  descontraido:'Você é um assistente de compras animado e descontraído! Use emojis, linguagem informal e seja muito entusiasmado.',
+};
+
+// ── STATE ──
+const answers = {
+  segmento:null, canal:[], plataforma:null, catalogo:null, frete:null, pedidos:null,
+  gateway:null, antifraude:null, pagamento:[], volume:null,
+  agentName:'', storeUrl:'', tom:null, features:{}, crossFeatures:{}
+};
+CROSS_FEATURES.forEach(f => { answers.crossFeatures[f.id] = f.included; });
+
+
+// ── WIZARD STATE ──
+function getFlow() {
+  const base = [1,2,3,4,5];
+  if (answers.plataforma === 'proprio') base.push(6,7,8);
+  base.push(9,10,11,12);
+  return base;
+}
+
+let flowIndex = 0;
+
+const STEP_LABELS = {1:'Segmento',2:'Canal',3:'Funcionalidades',4:'Personalização',5:'Plataforma',6:'Catálogo',7:'Frete',8:'Pedidos',9:'Gateway',10:'Antifraude',11:'Pagamento',12:'Volume'};
+
+function isValid(id) {
+  if(id===1) return !!answers.segmento;
+  if(id===2) return answers.canal.length>0;
+  if(id===3) return true;
+  if(id===4) return answers.storeUrl.trim().length>0 && answers.agentName.trim().length>0 && !!answers.tom;
+  if(id===5) return !!answers.plataforma;
+  if(id===6) return !!answers.catalogo;
+  if(id===7) return !!answers.frete;
+  if(id===8) return !!answers.pedidos;
+  if(id===9) return !!answers.gateway;
+  if(id===10) return !!answers.antifraude;
+  if(id===11) return answers.pagamento.length>0;
+  if(id===12) return !!answers.volume;
+  return true;
+}
+
+function updateProgress() {
+  const flow = getFlow();
+  const isResult = flowIndex >= flow.length;
+  const current = isResult ? flow.length : flowIndex+1;
+  const pct = Math.round((current/flow.length)*100);
+  const pf = document.getElementById('progress-fill');
+  if(pf) pf.style.width=(isResult?100:pct)+'%';
+  const pl = document.getElementById('pct-label');
+  if(pl) pl.textContent=(isResult?100:pct)+'%';
+  const sl = document.getElementById('step-label');
+  if(sl) sl.textContent=isResult?'Concluído':'Passo '+current+' de '+flow.length;
+
+  // Sincroniza estado do botão Continuar com a validação atual
+  const bn = document.getElementById('btn-next');
+  if(bn && !isResult) {
+    const curStepId = flow[flowIndex];
+    bn.disabled = !isValid(curStepId);
+  }
+
+  const si = document.getElementById('step-indicator');
+  if(!si) return;
+  si.innerHTML='';
+  flow.forEach((sid,i)=>{
+    const isDone=i<flowIndex||isResult;
+    const isActive=i===flowIndex&&!isResult;
+    const stepDiv=document.createElement('div');
+    stepDiv.className='si-step';
+    stepDiv.innerHTML='<div class="si-dot '+(isDone?'done':isActive?'active':'')+'">'+(isDone?'✓':(i+1))+'</div><div class="si-label '+(isActive?'active':'')+'">'+( STEP_LABELS[sid]||'')+'</div>';
+    si.appendChild(stepDiv);
+    if(i<flow.length-1){const line=document.createElement('div');line.className='si-line'+(isDone?' done':'');si.appendChild(line);}
+  });
+}
+
+function showStep(id) {
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('step-'+id);
+  if(el) el.classList.add('active');
+}
+
+function goNext() {
+  const flow=getFlow();
+  if(flowIndex<flow.length&&!isValid(flow[flowIndex])) return;
+  const curId=flowIndex<flow.length?'step-'+flow[flowIndex]:'step-resultado';
+  const curEl=document.getElementById(curId);
+  if(curEl) curEl.classList.remove('active');
+  flowIndex++;
+  if(flowIndex<flow.length){
+    const nextId=flow[flowIndex];
+    if(nextId===3) renderFeatures();
+    showStep(nextId);
+    const bb=document.getElementById('btn-back');
+    const bn=document.getElementById('btn-next');
+    if(bb) bb.disabled=false;
+    if(bn) bn.disabled=!isValid(nextId);
+    const nb=document.getElementById('nav-bar');
+    if(nb) nb.style.display='flex';
+  } else { showResultado(); }
+  updateProgress();
+}
+
+function goBack() {
+  if(flowIndex<=0) return;
+  const flow=getFlow();
+  const curId=flowIndex<flow.length?'step-'+flow[flowIndex]:'step-resultado';
+  const curEl=document.getElementById(curId);
+  if(curEl) curEl.classList.remove('active');
+  flowIndex--;
+  showStep(flow[flowIndex]);
+  const bb=document.getElementById('btn-back');
+  const bn=document.getElementById('btn-next');
+  const nb=document.getElementById('nav-bar');
+  if(bb) bb.disabled=flowIndex===0;
+  if(bn) bn.disabled=!isValid(flow[flowIndex]);
+  if(nb) nb.style.display='flex';
+  updateProgress();
+}
+
+function renderFeatures() {
+  const seg=SEGMENT_FEATURES[answers.segmento]||SEGMENT_FEATURES['outro'];
+  const titleEl=document.getElementById('features-title');
+  if(titleEl) titleEl.textContent='Funcionalidades para '+seg.label;
+  seg.features.forEach(f=>{ if(!(f.id in answers.features)) answers.features[f.id]=f.included; });
+  const agentEmoji=seg.emoji;
+  const agentName=answers.agentName||'Agente';
+  const container=document.getElementById('features-container');
+  if(!container) return;
+  container.innerHTML=
+    '<div class="features-section-title">Específicas do seu segmento</div>'+
+    '<div class="features-list">'+seg.features.map(f=>featureHtml(f,answers.features[f.id],'toggleFeature',agentEmoji,agentName)).join('')+'</div>'+
+    '<div class="features-section-title">Capacidades gerais — disponíveis para todos os segmentos</div>'+
+    '<div class="features-list">'+CROSS_FEATURES.map(f=>featureHtml(f,answers.crossFeatures[f.id],'toggleCross',agentEmoji,agentName)).join('')+'</div>';
+}
+
+function featureHtml(f,active,toggleFn,agentEmoji,agentName) {
+  const badge=f.coming?'<span class="feature-badge soon">Em breve</span>':f.extra?'<span class="feature-badge extra">Custo adicional por sessão</span>':'<span class="feature-badge">Incluído no plano</span>';
+  const tooltipHtml=f.tooltip?buildTooltip(f.tooltip,agentEmoji,agentName):'';
+  return `<div class="feature-item ${active&&!f.coming?'active':''} ${f.coming?'coming':''}" id="fi-${f.id}"><div class="feature-icon">${f.icon}</div><div class="feature-text"><div class="feature-label">${f.label}<span class="preview-btn" title="Ver como funciona">?</span></div><div class="feature-desc">${f.desc}</div><div class="feature-badges">${badge}</div></div><label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" ${active&&!f.coming?'checked':''} ${f.coming?'disabled':''} onchange="${toggleFn}('${f.id}',this.checked)"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>${tooltipHtml}</div>`;
+}
+
+function buildTooltip(tooltip,agentEmoji,agentName) {
+  const msgsHtml=tooltip.msgs.map(m=>{
+    if(m.type==='product') return '<div class="tooltip-product"><div class="tp-img">'+m.emoji+'</div><div class="tp-info"><div class="tp-name">'+m.name+'</div><div class="tp-price">'+m.price+'</div></div></div>';
+    return '<div class="tooltip-msg '+m.type+'"><div class="tm-avatar">'+(m.type==='agent'?agentEmoji:'EU')+'</div><div class="tm-bubble">'+m.text+'</div></div>';
+  }).join('');
+  return '<div class="feature-tooltip"><div class="tooltip-header"><div class="th-avatar">'+agentEmoji+'</div><div><div class="th-name">'+agentName+'</div><div class="th-sub">Agente de compras</div></div></div><div class="tooltip-body">'+msgsHtml+'</div><div class="tooltip-footer">'+tooltip.footer+'</div></div>';
+}
+
+function toggleFeature(id,val){answers.features[id]=val;const el=document.getElementById('fi-'+id);if(el)el.classList.toggle('active',val);}
+function toggleCross(id,val){answers.crossFeatures[id]=val;const el=document.getElementById('fi-'+id);if(el)el.classList.toggle('active',val);}
+
+function selectSegmento(el){el.closest('.options-grid').querySelectorAll('.option-card').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');answers.segmento=el.dataset.value;answers.features={};updateProgress();}
+function selectCanal(el){if(el.classList.contains('disabled'))return;el.classList.toggle('selected');const v=el.dataset.value;answers.canal=answers.canal.includes(v)?answers.canal.filter(c=>c!==v):[...answers.canal,v];updateProgress();}
+function selectPlataforma(el){el.closest('.options-grid').querySelectorAll('.option-card').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');answers.plataforma=el.dataset.value;updateProgress();}
+function selectOption(el,key){el.closest('.options').querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');answers[key]=el.dataset.value;updateProgress();}
+function selectMulti(el,key){const v=el.dataset.value;if(el.classList.contains('selected')){el.classList.remove('selected');answers[key]=answers[key].filter(x=>x!==v);}else{el.classList.add('selected');answers[key]=[...answers[key],v];}updateProgress();}
+function selectTone(el){document.querySelectorAll('.tone-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');answers.tom=el.dataset.value;updateConfigValid();}
+function updateConfigValid(){answers.agentName=(document.getElementById('agent-name')||{}).value||'';answers.storeUrl=(document.getElementById('store-url')||{}).value||'';updateProgress();}
+
+function selectGateway(el){
+  el.closest('.options').querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');answers.gateway=el.dataset.value;
+  const cfg=GATEWAY_CREDS[el.dataset.value];
+  const box=document.getElementById('cred-box');
+  if(!cfg||!box){updateProgress();return;}
+  box.style.display='block';
+  const ct=document.getElementById('cred-title');if(ct)ct.textContent=cfg.title;
+  const cd=document.getElementById('cred-desc');if(cd)cd.textContent=cfg.desc;
+  const fields=document.getElementById('cred-fields');
+  if(fields){fields.className='cred-fields'+(cfg.single?' single':'');fields.innerHTML=cfg.fields.map(f=>'<div class="cred-field"><label>'+f.label+'</label><input class="cred-input" type="text" placeholder="'+f.placeholder+'" autocomplete="off"></div>').join('');}
+  updateProgress();
+}
+
+function showResultado(){
+  const el=document.getElementById('step-resultado');if(el)el.classList.add('active');
+  const nb=document.getElementById('nav-bar');if(nb)nb.style.display='none';
+  const seg=SEGMENT_FEATURES[answers.segmento]||SEGMENT_FEATURES['outro'];
+  const name=answers.agentName||'Seu agente';
+  const plan=VOLUME_PLANS[answers.volume];
+  const isSP=answers.plataforma==='proprio';
+  const ra=document.getElementById('result-avatar');if(ra)ra.textContent=seg.emoji;
+  const rt=document.getElementById('result-title');if(rt)rt.innerHTML='<em>'+name+'</em> está pronto para sua loja!';
+  const rs=document.getElementById('result-subtitle');if(rs)rs.textContent='Agente configurado para '+seg.label+'.';
+  const activeFeats=[...seg.features.filter(f=>answers.features[f.id]),...CROSS_FEATURES.filter(f=>answers.crossFeatures[f.id]&&!f.coming)];
+  const pgtos=answers.pagamento.map(v=>LABELS.pagamento[v]).join(' + ');
+  const items=[
+    {icon:seg.emoji,label:'Segmento',value:seg.label},
+    {icon:'🌐',label:'Canal',value:answers.canal.map(c=>LABELS.canal[c]).join(' + ')},
+    {icon:'🔗',label:'URL da loja',value:answers.storeUrl},
+    {icon:'🤖',label:'Nome do agente',value:name},
+    {icon:'💬',label:'Tom de voz',value:LABELS.tom[answers.tom]},
+    {icon:'✨',label:'Funcionalidades',value:activeFeats.length>0?activeFeats.map(f=>f.label).join(', '):'Padrão'},
+    {icon:'🛍️',label:'Plataforma',value:LABELS.plataforma[answers.plataforma]},
+  ];
+  if(isSP){items.push({icon:'📦',label:'Catálogo',value:LABELS.catalogo[answers.catalogo]});items.push({icon:'🚚',label:'Frete',value:LABELS.frete[answers.frete]});items.push({icon:'📋',label:'Pedidos',value:LABELS.pedidos[answers.pedidos]});}
+  items.push({icon:'💳',label:'Gateway',value:LABELS.gateway[answers.gateway]});
+  items.push({icon:'🛡️',label:'Antifraude',value:LABELS.antifraude[answers.antifraude]});
+  items.push({icon:'⚡',label:'Meios de pagamento',value:pgtos});
+  items.push({icon:'📊',label:'Volume',value:LABELS.volume[answers.volume]});
+  const cl=document.getElementById('config-list');
+  if(cl)cl.innerHTML=items.map(i=>'<div class="config-item"><div class="ci-icon">'+i.icon+'</div><div><div class="ci-label">'+i.label+'</div><div class="ci-value">'+(i.value||'—')+'</div></div></div>').join('');
+  const pr=document.getElementById('plan-rows');
+  if(pr&&plan)pr.innerHTML='<div class="plan-row"><span class="pr-label">'+plan.label+'</span><span class="pr-value"></span></div><div class="plan-row"><span class="pr-label">Sessões incluídas</span><span class="pr-value">'+plan.sessions+' sessões/mês</span></div><div class="plan-row"><span class="pr-label">Custo médio por sessão</span><span class="pr-value">'+plan.price+'</span></div><div class="plan-divider"></div><div class="plan-row total"><span class="pr-label">Estimativa mensal</span><span class="pr-value">'+plan.total+'</span></div>';
+}
+
+function showScript(){
+  const merchantId='AGP-'+Math.random().toString(36).substr(2,8).toUpperCase();
+  const name=answers.agentName||'agente';
+  ['main-card','step-indicator','progress-wrap','nav-bar'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const header=document.querySelector('.header');if(header)header.style.display='none';
+  const san=document.getElementById('script-agent-name');if(san)san.textContent=name;
+  const scriptStr='<script id="cielo-agp"\n  charset="UTF-8"\n  type="text/javascript"\n  src="https://agente.cielo.com.br/agp.js?merchantId='+merchantId+'"><\/script>';
+  const sc=document.getElementById('script-code');
+  if(sc)sc.innerHTML='&lt;<span class="attr">script</span> <span class="attr">id</span>=<span class="val">"cielo-agp"</span>\n  <span class="attr">charset</span>=<span class="val">"UTF-8"</span>\n  <span class="attr">type</span>=<span class="val">"text/javascript"</span>\n  <span class="attr">src</span>=<span class="val">"https://agente.cielo.com.br/agp.js?merchantId='+merchantId+'"</span>&gt;&lt;/<span class="attr">script</span>&gt;';
+  const plat=PLATFORM_INSTRUCTIONS[answers.plataforma]||PLATFORM_INSTRUCTIONS['proprio'];
+  const pi=document.getElementById('platform-instructions');
+  if(pi)pi.innerHTML='<div class="platform-inst"><div class="pi-icon">'+plat.icon+'</div><div class="pi-text"><strong>'+plat.name+':</strong> '+plat.text+'</div><a class="pi-link" href="#">Ver guia →</a></div>';
+  const ss=document.getElementById('script-screen');if(ss)ss.classList.add('active');
+  window._scriptToCopy=scriptStr;
+  setTimeout(()=>initPlayground(),400);
+}
+
+function copyScript(){
+  navigator.clipboard.writeText(window._scriptToCopy||'').then(()=>{
+    const b=document.getElementById('btn-copy');
+    if(b){b.textContent='✓ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copiar';b.classList.remove('copied');},2500);}
+  });
+}
+
+
+// ── CHAT STATE ──
+let chatState = {
+  step: 'greeting', // greeting > products > cart > address > payment > done
+  agentName: '', agentEmoji: '', segment: '', tone: 'neutro',
+  cart: [], // [{id, name, price, emoji, qty}]
+  lastProducts: [],
+  generatedProducts: [], // produtos gerados dinamicamente pela IA
+};
+
+function cartTotal() {
+  return chatState.cart.reduce((sum, item) => {
+    const val = parseFloat(item.price.replace('R$ ','').replace(/\./g,'').replace(',','.'));
+    return sum + val * item.qty;
+  }, 0);
+}
+function fmtPrice(val) { return 'R$ ' + val.toFixed(2).replace('.',','); }
+
+// ── INIT ──
+function initPlayground() {
+  const seg = SEGMENT_FEATURES[answers.segmento] || SEGMENT_FEATURES['outro'];
+  chatState = {
+    step: 'greeting', agentName: answers.agentName || 'Agente',
+    agentEmoji: seg.emoji, segment: answers.segmento || 'outro',
+    tone: answers.tom || 'neutro', cart: [], lastProducts: [],
+  };
+  const pgAvatar = document.getElementById('pg-avatar');
+  if (pgAvatar) pgAvatar.textContent = seg.emoji;
+  const pgName = document.getElementById('pg-agent-name');
+  if (pgName) pgName.textContent = chatState.agentName;
+  const msgs = document.getElementById('chat-messages');
+  if (msgs) msgs.innerHTML = '';
+
+  const greetings = {
+    formal: `Ola! Sou ${chatState.agentName}, seu assistente de compras. O que posso encontrar para voce hoje?`,
+    neutro: `Oi! Sou ${chatState.agentName}, seu assistente de compras. O que voce esta procurando hoje?`,
+    descontraido: `E ai! Sou ${chatState.agentName}! Conta o que voce ta procurando que eu encontro aqui pra voce!`,
+  };
+  setTimeout(() => addAgentMsg(greetings[chatState.tone]), 500);
+}
+
+// ── MENSAGENS ──
+function addAgentMsg(text, extra = null) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.className = 'msg agent';
+  div.innerHTML = `<div class="msg-avatar">${chatState.agentEmoji}</div><div><div class="msg-bubble">${text}</div>${extra || ''}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-avatar">EU</div><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.className = 'msg agent'; div.id = 'typing-ind';
+  div.innerHTML = `<div class="msg-avatar">${chatState.agentEmoji}</div><div class="msg-bubble" style="padding:10px 14px"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { const t = document.getElementById('typing-ind'); if (t) t.remove(); }
+
+// ── PRODUTOS ──
+function addProductGrid(products) {
+  chatState.lastProducts = products;
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const agentLabel = chatState.agentName;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg agent';
+  const cardsHtml = products.map(p => `
+    <div class="product-card" onclick="addToCart('${p.id}')" data-id="${p.id}">
+      <div class="pc-img">
+        <img src="${p.img}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.emoji}'" style="width:100%;height:110px;object-fit:cover">
+      </div>
+      <div class="pc-info">
+        <div class="pc-badge">${agentLabel}</div>
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-price">${p.price}</div>
+      </div>
+    </div>`).join('');
+  wrap.innerHTML = `<div class="msg-avatar">${chatState.agentEmoji}</div><div style="flex:1"><div class="product-grid">${cardsHtml}</div></div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addToCart(id) {
+  // Busca primeiro nos produtos gerados dinamicamente pela IA, depois no catálogo
+  const dynamicPool = chatState.generatedProducts || [];
+  const staticPool = CATALOG[chatState.segment] || CATALOG['outro'];
+  const allProducts = [...dynamicPool, ...staticPool];
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+
+  // marca o card como selecionado
+  document.querySelectorAll(`.product-card[data-id="${id}"]`).forEach(c => c.classList.add('selected'));
+
+  // adiciona ao carrinho (ou incrementa qty)
+  const existing = chatState.cart.find(i => i.id === id);
+  if (existing) { existing.qty++; }
+  else { chatState.cart.push({ ...p, qty: 1 }); }
+
+  addUserMsg(`Quero: ${p.name}`);
+  chatState.step = 'cart';
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const addMsgs = {
+      formal: `Adicionado ao carrinho! Deseja adicionar mais algum produto ou prefere prosseguir?`,
+      neutro: `Adicionado ao carrinho! Quer mais alguma coisa ou pode seguir?`,
+      descontraido: `No carrinho! Quer mais alguma coisa ou ja fechamos?`,
+    };
+    addAgentMsg(addMsgs[chatState.tone]);
+    setTimeout(() => showCartMsg(), 400);
+  }, 700);
+}
+
+// ── CARRINHO ──
+function showCartMsg() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg agent';
+  wrap.id = 'cart-msg';
+
+  const itemsHtml = chatState.cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-emoji">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-qty">Qtd: ${item.qty}</div>
+      </div>
+      <div class="cart-item-price">${item.price}</div>
+      <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">✕</button>
+    </div>`).join('');
+
+  const subtotal = cartTotal();
+  const frete = 12.90;
+  const total = subtotal + frete;
+
+  wrap.innerHTML = `
+    <div class="msg-avatar">${chatState.agentEmoji}</div>
+    <div style="flex:1">
+      <div class="cart-summary">
+        <div class="cart-header">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-title">Seu carrinho</span>
+        </div>
+        <div class="cart-items">${itemsHtml}</div>
+        <div class="cart-totals">
+          <div class="cart-total-row"><span>Subtotal</span><span>${fmtPrice(subtotal)}</span></div>
+          <div class="cart-total-row"><span>Frete estimado</span><span>${fmtPrice(frete)}</span></div>
+          <div class="cart-total-row total"><span>Total</span><span>${fmtPrice(total)}</span></div>
+        </div>
+        <div class="cart-actions">
+          <button class="cart-btn-secondary" onclick="continueShoping()">+ Adicionar mais</button>
+          <button class="cart-btn-primary" onclick="proceedToAddress()">Confirmar e continuar</button>
+        </div>
+      </div>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function updateCartMsg() {
+  const old = document.getElementById('cart-msg');
+  if (old) old.remove();
+  if (chatState.cart.length > 0) showCartMsg();
+}
+
+function removeFromCart(id) {
+  chatState.cart = chatState.cart.filter(i => i.id !== id);
+  document.querySelectorAll(`.product-card[data-id="${id}"]`).forEach(c => c.classList.remove('selected'));
+  if (chatState.cart.length === 0) {
+    const old = document.getElementById('cart-msg');
+    if (old) old.remove();
+    const emptyMsgs = {
+      formal: 'Carrinho vazio. O que posso encontrar para voce?',
+      neutro: 'Carrinho vazio! O que voce esta procurando?',
+      descontraido: 'Carrinho vazio! O que voce quer ver?',
+    };
+    addAgentMsg(emptyMsgs[chatState.tone]);
+    chatState.step = 'greeting';
+  } else {
+    updateCartMsg();
+  }
+}
+
+function continueShoping() {
+  const old = document.getElementById('cart-msg');
+  if (old) old.remove();
+  chatState.step = 'greeting';
+  const moreMsgs = {
+    formal: 'Claro! O que mais posso encontrar para voce?',
+    neutro: 'Claro! O que mais voce quer ver?',
+    descontraido: 'Claro! O que mais voce quer?',
+  };
+  addAgentMsg(moreMsgs[chatState.tone]);
+}
+
+// ── ENDEREÇO ──
+function proceedToAddress() {
+  const old = document.getElementById('cart-msg');
+  if (old) old.remove();
+  chatState.step = 'address';
+  addUserMsg('Confirmar e continuar');
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const addrMsgs = {
+      formal: 'Perfeito! Para qual endereco deseja receber o pedido?',
+      neutro: 'Otimo! Para qual endereco voce quer receber?',
+      descontraido: 'Show! Para qual endereco mando?',
+    };
+    addAgentMsg(addrMsgs[chatState.tone]);
+    setTimeout(() => addAddressCards(), 400);
+  }, 800);
+}
+
+function addAddressCards() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg agent';
+  wrap.innerHTML = `
+    <div class="msg-avatar" style="visibility:hidden">${chatState.agentEmoji}</div>
+    <div class="address-cards">
+      <div class="address-card" onclick="selectAddress(this,'Casa','Rua das Palmeiras, 123 - Jardim Paulista, SP')">
+        <div class="ac-pin">📍</div>
+        <div><div class="ac-name">Casa</div><div class="ac-detail">Rua das Palmeiras, 123<br>Jardim Paulista, Sao Paulo - SP · 01419-001</div></div>
+      </div>
+      <div class="address-card" onclick="selectAddress(this,'Trabalho','Av. Paulista, 1000 - Bela Vista, SP')">
+        <div class="ac-pin">📍</div>
+        <div><div class="ac-name">Trabalho</div><div class="ac-detail">Av. Paulista, 1000<br>Bela Vista, Sao Paulo - SP · 01310-100</div></div>
+      </div>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function selectAddress(el, name, detail) {
+  document.querySelectorAll('.address-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  addUserMsg(`Endereco: ${name}`);
+  chatState.step = 'payment';
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const payMsgs = {
+      formal: `Endereco confirmado: ${detail}. Qual forma de pagamento deseja utilizar?`,
+      neutro: `Endereco confirmado! Como voce prefere pagar?`,
+      descontraido: `Boa! Endereco anotado. Como vai pagar?`,
+    };
+    addAgentMsg(payMsgs[chatState.tone]);
+    setTimeout(() => addPaymentCards(), 400);
+  }, 800);
+}
+
+// ── PAGAMENTO ──
+function addPaymentCards() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg agent';
+  wrap.innerHTML = `
+    <div class="msg-avatar" style="visibility:hidden">${chatState.agentEmoji}</div>
+    <div class="payment-cards">
+      <div class="payment-card" onclick="selectPaymentCard(this,'Visa credito','credito')">
+        <div class="pmc-icon"><svg viewBox="0 0 30 20" fill="none"><rect width="30" height="20" rx="3" fill="#1A56DB"/><text x="5" y="14" font-size="8" font-weight="bold" fill="white" font-family="Arial">VISA</text></svg></div>
+        <div class="pmc-info">
+          <div class="pmc-name">Cartao de credito Visa <span class="pmc-badge">Padrao</span></div>
+          <div class="pmc-sub">...1784 · Credito · Visa</div>
+        </div>
+      </div>
+      <div class="payment-card" onclick="selectPaymentCard(this,'Mastercard','credito')">
+        <div class="pmc-icon"><svg viewBox="0 0 30 20" fill="none"><rect width="30" height="20" rx="3" fill="#EB001B"/><circle cx="12" cy="10" r="6" fill="#EB001B"/><circle cx="18" cy="10" r="6" fill="#F79E1B"/></svg></div>
+        <div class="pmc-info">
+          <div class="pmc-name">Cartao de credito Mastercard</div>
+          <div class="pmc-sub">...5432 · Credito · Mastercard</div>
+        </div>
+      </div>
+      <div class="payment-card" onclick="selectPaymentCard(this,'Pix','pix')">
+        <div class="pmc-icon"><svg viewBox="0 0 30 20" fill="none"><rect width="30" height="20" rx="3" fill="#32BCAD"/><text x="6" y="14" font-size="8" font-weight="bold" fill="white" font-family="Arial">PIX</text></svg></div>
+        <div class="pmc-info">
+          <div class="pmc-name">Pix</div>
+          <div class="pmc-sub">Aprovacao instantanea · 24h</div>
+        </div>
+      </div>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function selectPaymentCard(el, brand, type) {
+  document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  addUserMsg(type === 'pix' ? 'Pix' : `Cartao ${brand}`);
+  chatState.step = 'done';
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const total = fmtPrice(cartTotal() + 12.90);
+    const itemNames = chatState.cart.map(i => `${i.emoji} ${i.name}`).join(', ');
+    const confirmMsgs = {
+      formal: `Pagamento via ${brand} confirmado. Pedido realizado com sucesso!`,
+      neutro: `Pagamento confirmado! Pedido feito com sucesso!`,
+      descontraido: `${type === 'pix' ? 'PIX confirmado!' : 'Cartao aprovado!'} Pedido feito!`,
+    };
+    addAgentMsg(confirmMsgs[chatState.tone]);
+    setTimeout(() => {
+      const msgs = document.getElementById('chat-messages');
+      if (!msgs) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'msg agent';
+      wrap.innerHTML = `
+        <div class="msg-avatar" style="visibility:hidden">${chatState.agentEmoji}</div>
+        <div class="success-msg">
+          <div class="sm-icon">🎉</div>
+          <div class="sm-title">Pedido realizado com sucesso!</div>
+          <div class="sm-sub">${itemNames}<br><strong>${total}</strong> · Entrega em 3-5 dias uteis</div>
+        </div>`;
+      msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+      setTimeout(() => {
+        const finalMsgs = {
+          formal: 'Obrigado por comprar conosco. Posso ajudar com mais alguma coisa?',
+          neutro: 'Obrigado pela compra! Posso ajudar com mais alguma coisa?',
+          descontraido: 'Foi um prazer! Qualquer coisa e so chamar!',
+        };
+        addAgentMsg(finalMsgs[chatState.tone]);
+      }, 800);
+    }, 400);
+  }, 1000);
+}
+
+// ── SEND MESSAGE (busca livre) ──
+async function sendMessage() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMsg(text);
+
+  if (chatState.step === 'done') {
+    showTyping(); await delay(600); removeTyping();
+    const byeMsgs = { formal: 'Fico à disposição!', neutro: 'Sempre que precisar, estou aqui!', descontraido: 'Qualquer coisa é só chamar! 😄' };
+    addAgentMsg(byeMsgs[chatState.tone]); return;
+  }
+  if (chatState.step === 'address' || chatState.step === 'payment') {
+    showTyping(); await delay(600); removeTyping();
+    addAgentMsg('Por favor, selecione uma das opções acima para continuar.'); return;
+  }
+
+  chatState.step = 'searching';
+  showTyping();
+
+  const toneDesc = {
+    formal: 'formal e profissional, use "você", linguagem culta',
+    neutro: 'simpático e direto, linguagem clara',
+    descontraido: 'animado e descontraído, use emojis'
+  }[chatState.tone] || 'simpático e direto';
+
+  const prompt = `Você é ${chatState.agentName}, agente de compras. Tom: ${toneDesc}.
+
+O cliente pediu: "${text}"
+
+Responda SOMENTE com este JSON (sem nenhum texto antes ou depois, sem markdown):
+{"resposta":"frase curta do agente","produtos":[{"id":"p1","name":"nome do produto","price":"R$ 0,00","emoji":"emoji"},{"id":"p2","name":"nome do produto","price":"R$ 0,00","emoji":"emoji"},{"id":"p3","name":"nome do produto","price":"R$ 0,00","emoji":"emoji"},{"id":"p4","name":"nome do produto","price":"R$ 0,00","emoji":"emoji"}]}
+
+Regras:
+- 4 produtos reais e relevantes para o que o cliente pediu
+- Preços realistas em reais (ex: R$ 89,90)
+- Emojis relevantes ao produto
+- Nomes específicos (modelo, tamanho, variação quando aplicável)
+- resposta: 1 frase curta no tom correto`;
+
+  try {
+    const apiKey = new URLSearchParams(window.location.search).get('key') || '';
+    if (!apiKey) {
+      removeTyping();
+      addAgentMsg('⚠️ API key não encontrada. Acesse o link com ?key=sua-chave no final.');
+      chatState.step = 'greeting';
+      return;
+    }
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error('API error ' + res.status + ': ' + (errData.error?.message || ''));
+    }
+    const data = await res.json();
+    removeTyping();
+
+    const rawText = data.content?.[0]?.text || '';
+
+    // debug temporário — mostra o que a API retornou
+    console.log('API raw response:', rawText);
+
+    let resposta = 'Encontrei estas opções para você:';
+    let produtos = [];
+
+    // Tenta extrair JSON da resposta — agressivo, pega tudo entre { e o último }
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('no json block found');
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed.resposta) resposta = parsed.resposta;
+      if (Array.isArray(parsed.produtos) && parsed.produtos.length > 0) {
+        produtos = parsed.produtos;
+      }
+    } catch(parseErr) {
+      console.warn('Parse falhou:', parseErr.message, '| raw:', rawText);
+    }
+
+    // Se ainda sem produtos, mostra erro no chat para debug
+    if (produtos.length === 0) {
+      addAgentMsg('⚠️ [DEBUG] Parse falhou. Abra o console (F12) e veja a aba Console para ver o que a API retornou.');
+      chatState.step = 'greeting';
+      return;
+    }
+
+    chatState.generatedProducts = produtos;
+    addAgentMsg(resposta);
+    chatState.step = 'products';
+    setTimeout(() => addProductGrid(produtos), 300);
+
+  } catch (netErr) {
+    removeTyping();
+    console.error('Erro de rede/API:', netErr);
+    addAgentMsg('⚠️ [DEBUG] Erro de conexão com a API. Verifique o console (F12).');
+    chatState.step = 'greeting';
+  }
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+
+updateProgress();
+</script>
+</body>
+</html>

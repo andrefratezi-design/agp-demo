@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funil de Prospecção · AGP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1116;
+    --panel: #161B22;
+    --panel-2: #1C2330;
+    --line: #2A3140;
+    --line-soft: #1E242F;
+    --ink: #E8ECF1;
+    --muted: #8B96A8;
+    --accent: #4FD1C5;
+    --accent-2: #5B8DEF;
+
+    --s1: #94A3B8;
+    --s2: #5B8DEF;
+    --s3: #4FD1C5;
+    --s4: #F2C265;
+    --s5: #F2876B;
+    --s6: #6FCF97;
+
+    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header{
+    padding: 28px clamp(16px,4vw,48px) 22px;
+    border-bottom: 1px solid var(--line);
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1{
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .subtitle{
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 760px;
+  }
+  .meta-row{
+    margin-top: 12px;
+    display:flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .meta-row b{ color: var(--ink); font-weight: 500; }
+
+  .highlight-metric{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 14px;
+  }
+  .highlight-metric .num{
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .highlight-metric .lbl{
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .search-wrap{
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+    margin-left: auto;
+  }
+  #search{
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 14px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  #search::placeholder{ color: var(--muted); }
+  #search:focus{ border-color: var(--accent); }
+
+  /* ===== TIMELINE / FLOW ===== */
+  .flow-section{
+    padding: 32px clamp(16px,4vw,48px) 8px;
+  }
+  .section-title{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .flow-row{
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 1280px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .flow-row .stage-wrap{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 170px;
+  }
+
+  .stage{
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px 16px;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s, background .15s;
+    position: relative;
+    min-width: 0;
+  }
+  .stage:hover{
+    border-color: var(--accent-2);
+    transform: translateY(-2px);
+  }
+  .stage.active{
+    border-color: var(--accent);
+    background: var(--panel-2);
+  }
+  .stage-num{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .stage-name{
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    min-height: 34px;
+  }
+  .stage-count{
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 10px;
+    line-height: 1;
+  }
+  .stage-bar-track{
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .stage-bar-fill{
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(.16,1,.3,1);
+    width: 0%;
+  }
+  .connector{
+    flex: 0 0 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--line);
+    font-size: 16px;
+  }
+
+  .branch-stack{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 150px;
+  }
+  .branch-stage{
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s, background .15s;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+  .branch-stage:hover{
+    border-color: var(--accent-2);
+    transform: translateY(-1px);
+  }
+  .branch-stage.active{
+    border-color: var(--accent);
+    background: var(--panel-2);
+  }
+  .branch-stage .stage-num{ margin-bottom: 2px; font-size: 10px; }
+  .branch-stage .stage-name{
+    min-height: unset;
+    font-size: 12px;
+    line-height: 1.25;
+  }
+  .branch-stage .stage-count{
+    margin-top: 4px;
+    font-size: 18px;
+  }
+  .branch-stage .stage-bar-track{
+    margin-top: 6px;
+    height: 3px;
+  }
+
+  /* ===== DETAIL ===== */
+  .detail-section{
+    padding: 0 clamp(16px,4vw,48px) 48px;
+  }
+  .detail-header{
+    margin-top: 30px;
+    margin-bottom: 16px;
+    display:flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .detail-header h2{
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .detail-header .badge{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .empty-state{
+    color: var(--muted);
+    font-size: 13px;
+    font-family: var(--font-mono);
+    padding: 24px 0;
+    text-align: center;
+  }
+
+  /* ===== CARD ===== */
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 3px solid var(--stage-color, var(--accent));
+  }
+  .card-title{
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .card-row{
+    font-size: 12.5px;
+    color: var(--muted);
+    display:flex;
+    gap: 8px;
+    align-items:flex-start;
+  }
+  .card-row .label{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex-shrink:0;
+    padding-top: 2px;
+    min-width: 78px;
+  }
+  .card-row .value{
+    color: var(--ink);
+    font-size: 12.5px;
+  }
+  .card-resumo{
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px dashed var(--line);
+    padding-top: 10px;
+    line-height: 1.55;
+  }
+  .agenda-pill{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    display: inline-block;
+  }
+  .agenda-pill.pendente{ color: var(--muted); border-style: dashed; }
+  .stack-tags{
+    display:flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .stack-tag{
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: rgba(79,209,197,0.08);
+    border: 1px solid rgba(79,209,197,0.25);
+    color: var(--accent);
+  }
+
+  footer{
+    padding: 20px clamp(16px,4vw,48px) 32px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 900px){
+    .meta-row{ flex-direction: column; align-items: flex-start; }
+    .search-wrap{ max-width: 100%; margin-left: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">AGP · Agente de Compras — Cielo</div>
+  <h1>Funil de Prospecção de Clientes</h1>
+  <p class="subtitle">Linha do tempo de relacionamento com lojistas, do alinhamento interno até o desfecho (piloto confirmado ou sem retorno / desistência). Clique em uma etapa para ver os clientes.</p>
+  <div class="meta-row">
+    <span>Última atualização: <b id="updated-at"></b></span>
+    <span>Total de oportunidades: <b id="total-count"></b></span>
+    <div class="highlight-metric">
+      <span class="num" id="contacted-count"></span>
+      <span class="lbl">reuniões já realizadas (etapas 4, 5 e 6)</span>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Buscar por cliente ou responsável...">
+    </div>
+  </div>
+</header>
+
+<section class="flow-section">
+  <div class="section-title">Linha do tempo</div>
+  <div class="flow-row" id="flow-row"></div>
+</section>
+
+<section class="detail-section" id="detail-section">
+  <div class="empty-state">Selecione uma etapa acima para ver os clientes.</div>
+</section>
+
+<footer>
+  Fonte: base de agendas e oportunidades AGP · Atualizado manualmente a partir da planilha de controle
+</footer>
+
+<script>
+const DATA = [{"cliente": "Kalunga", "status": 5, "gestor": "Carla Martins", "agenda_label": "Material enviado — 05/03", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Time avalia o material internamente e ainda não retornou."}, {"cliente": "Veste", "status": 4, "gestor": "Carla Martins", "agenda_label": "Reunião realizada — 22/05", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Boa recepção na reunião. Próximo passo: enviar vídeo de demonstração."}, {"cliente": "Vivara", "status": 1, "gestor": null, "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, aguardando definição de gestor responsável."}, {"cliente": "C&A", "status": 4, "gestor": "Carla Martins", "agenda_label": "Reunião realizada — 14/05", "plataforma": "VTEX", "gateway_clean": "Braspag", "antifraude": "ClearSale", "resumo": "Cliente endossou a estratégia e pediu agenda técnica para detalhar a integração."}, {"cliente": "Riachuelo", "status": 1, "gestor": null, "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, aguardando definição de gestor responsável."}, {"cliente": "Arezzo", "status": 5, "gestor": "Leonardo Cesario", "agenda_label": "Apresentação feita — 17/03", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Avaliação interna em andamento no time Arezzo, sem retorno até o momento."}, {"cliente": "Constance", "status": 5, "gestor": "Fabio Fortes (cobrindo férias)", "agenda_label": "Reunião realizada — 06/04", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Restrição de conciliação impede operar com outro adquirente no e-commerce; projeto interno em curso pode reabrir a conversa."}, {"cliente": "Cobasi", "status": 2, "gestor": "Karina Valente Alves", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade mapeada, agenda inicial ainda não puxada."}, {"cliente": "Tambasa", "status": 5, "gestor": "Laura Mariana", "agenda_label": "Apresentação feita — 13/03", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Avaliação interna focada no site \"Vem Ki Tem\". Site muito customizado e com venda apenas em área logada — validar adequação como case de piloto."}, {"cliente": "Insider", "status": 5, "gestor": "Karina Valente Alves", "agenda_label": "2 reuniões realizadas — 15/04 e 30/04", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Já possui solução similar, mas demonstrou forte interesse na etapa de pagamento. Vídeo de demonstração já enviado."}, {"cliente": "Livelo", "status": 4, "gestor": "Thais Mota / Leonardo Martins de Lima", "agenda_label": "Reunião realizada — 11/04", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Maior interesse na etapa de pagamento. Pendente: compartilhar documentação de integração."}, {"cliente": "Lojas Bemol", "status": 2, "gestor": "Ana Larissa Freire Pinto", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade mapeada, agenda inicial ainda não puxada."}, {"cliente": "Tapajós Distribuidora (Drogarias Santo Remédio)", "status": 5, "gestor": "Ana Larissa Freire Pinto", "agenda_label": "2 reuniões realizadas — 10/04 e 20/04", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Aguardando confirmação sobre retorno ao e-commerce Cielo; viabilidade da retomada é incerta."}, {"cliente": "Via Inox — Distribuidor Tramontina", "status": 4, "gestor": "Priscila Wexell Crukovic", "agenda_label": "Reunião realizada — 08/06", "plataforma": "UAPPI", "gateway_clean": "API 3.0 direto", "antifraude": "ClearSale", "resumo": "Excelente recepção da líder de e-commerce. Aguardando formalização sobre continuidade."}, {"cliente": "ABC da Construção", "status": 4, "gestor": "Raphael Blay", "agenda_label": "Reunião realizada — 05/05", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Boa recepção, cliente vai compartilhar internamente e agendar próxima conversa. Vídeo já enviado."}, {"cliente": "La Moda", "status": 2, "gestor": "Alex Fabiano Marqueze", "agenda_label": "A reagendar", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Agenda inicial foi cancelada e ainda não remarcada."}, {"cliente": "Cocobambu", "status": 2, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, agenda ainda não puxada."}, {"cliente": "Beach Park", "status": 2, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, agenda ainda não puxada."}, {"cliente": "Vila Galé", "status": 2, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, agenda ainda não puxada."}, {"cliente": "Farmácias Pague Menos", "status": 6, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "Reunião realizada — 20/05", "plataforma": "VTEX", "gateway_clean": "Yuno", "antifraude": "ClearSale", "resumo": "Piloto confirmado. Próximo passo: reunião técnica para apresentar a solução macro de integração."}, {"cliente": "Drogarias Globo", "status": 5, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "Reunião realizada — 28/04", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Vídeo enviado para validação interna. Pendentes: alinhamento do contrato do piloto e agenda técnica de integração."}, {"cliente": "Auto Peças Padre Cícero", "status": 2, "gestor": "Tatiane Cristine Barbosa Brazao", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, agenda ainda não puxada."}, {"cliente": "Inbrands", "status": 4, "gestor": "Viviane dos Santos / Leonardo Cesario", "agenda_label": "Reunião realizada — 07/05", "plataforma": "Wake", "gateway_clean": null, "antifraude": "ClearSale", "resumo": "Cliente solicitou vídeo de demonstração e print da máscara de cartão de crédito."}, {"cliente": "Globoplay", "status": 4, "gestor": "Karina Valente Alves", "agenda_label": "Reunião agendada — 02/06", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Agenda confirmada com o cliente."}, {"cliente": "Casa Santa Luzia", "status": 4, "gestor": "Gabriela Sampaio", "agenda_label": "Reunião agendada — 29/05", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Agenda confirmada com o cliente."}, {"cliente": "Studio Z", "status": 2, "gestor": "Tatiane Suelen Cagol", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada, agenda ainda não puxada."}, {"cliente": "Natura", "status": 2, "gestor": "Bruna Lopes", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Foco em consultoras que compram pela plataforma — oportunidade de melhorar busca, conversão e abandono em compras de lote. Sugestão de demo: experiência de uma consultora nova decidindo o que comprar."}, {"cliente": "Clickbus", "status": 2, "gestor": "Marcela da Silva", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Sugestão de demo: simular uma busca de viagem RJ → Florianópolis, comparando trecho único com a compra de duas passagens separadas."}, {"cliente": "Guanabara", "status": 2, "gestor": "Marcela da Silva", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Oportunidade identificada no segmento de viagens, agenda ainda não puxada."}, {"cliente": "Monjeral — MAG Seguros", "status": 2, "gestor": "Marcela da Silva", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Primeira conversa prevista sem demo, com foco em entender o segmento e as dores do cliente."}, {"cliente": "Unyleya", "status": 2, "gestor": "Laura Mariana", "agenda_label": "A definir", "plataforma": null, "gateway_clean": null, "antifraude": null, "resumo": "Sugestão de demo: ajudar um aluno indeciso a encontrar o curso de graduação ideal."}];
+
+const MAIN_STAGES = [
+  { id: 1, name: "Alinhamento interno", color: "var(--s1)" },
+  { id: 2, name: "Aguardando agenda cliente", color: "var(--s2)" },
+  { id: 3, name: "Apresentação cliente agendada", color: "var(--s3)" },
+  { id: 4, name: "Aguardando avaliação do cliente", color: "var(--s4)" }
+];
+
+const BRANCH_STAGES = [
+  { id: 6, name: "Piloto confirmado", color: "var(--s6)" },
+  { id: 5, name: "Sem resposta / Desistência", color: "var(--s5)" }
+];
+
+const ALL_STAGES = [...MAIN_STAGES, ...BRANCH_STAGES];
+
+let activeStage = null;
+
+function agendaPill(label){
+  if(!label) return "";
+  const isPending = /pendente|a definir|a reagendar/i.test(label);
+  return `<span class="agenda-pill ${isPending ? "pendente" : ""}">${label}</span>`;
+}
+
+function stackTags(item){
+  const tags = [item.plataforma, item.gateway_clean, item.antifraude].filter(Boolean);
+  if(!tags.length) return "";
+  return `<div class="stack-tags">${tags.map(t => `<span class="stack-tag">${t}</span>`).join('')}</div>`;
+}
+
+function counts(){
+  const c = {};
+  ALL_STAGES.forEach(st => c[st.id] = DATA.filter(d => d.status === st.id).length);
+  return c;
+}
+
+function renderFlow(){
+  const c = counts();
+  const max = Math.max(...Object.values(c));
+
+  const flowRow = document.getElementById('flow-row');
+  flowRow.innerHTML = "";
+
+  MAIN_STAGES.forEach((st) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'stage-wrap';
+
+    const div = document.createElement('div');
+    div.className = 'stage';
+    if(activeStage === st.id) div.classList.add('active');
+    div.innerHTML = `
+      <div class="stage-num">Etapa ${st.id}</div>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-count" style="color:${st.color}">${c[st.id]}</div>
+      <div class="stage-bar-track"><div class="stage-bar-fill" style="background:${st.color}" data-pct="${max ? c[st.id]/max*100 : 0}"></div></div>
+    `;
+    div.onclick = () => {
+      activeStage = (activeStage === st.id) ? null : st.id;
+      renderFlow();
+      renderDetail();
+    };
+    wrap.appendChild(div);
+
+    const conn = document.createElement('div');
+    conn.className = 'connector';
+    conn.innerHTML = '&#8594;';
+    wrap.appendChild(conn);
+
+    flowRow.appendChild(wrap);
+  });
+
+  const branchWrap = document.createElement('div');
+  branchWrap.className = 'stage-wrap';
+  branchWrap.style.flex = '1';
+
+  const stack = document.createElement('div');
+  stack.className = 'branch-stack';
+
+  BRANCH_STAGES.forEach(st => {
+    const div = document.createElement('div');
+    div.className = 'branch-stage';
+    if(activeStage === st.id) div.classList.add('active');
+    div.innerHTML = `
+      <div class="stage-num">Etapa ${st.id}</div>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-count" style="color:${st.color}">${c[st.id]}</div>
+      <div class="stage-bar-track"><div class="stage-bar-fill" style="background:${st.color}" data-pct="${max ? c[st.id]/max*100 : 0}"></div></div>
+    `;
+    div.onclick = () => {
+      activeStage = (activeStage === st.id) ? null : st.id;
+      renderFlow();
+      renderDetail();
+    };
+    stack.appendChild(div);
+  });
+
+  branchWrap.appendChild(stack);
+  flowRow.appendChild(branchWrap);
+
+
+  document.querySelectorAll('.stage-bar-fill').forEach(b => {
+    requestAnimationFrame(() => setTimeout(() => { b.style.width = b.dataset.pct + '%'; }, 60));
+  });
+}
+
+function renderDetail(){
+  const section = document.getElementById('detail-section');
+  const query = document.getElementById('search').value.trim().toLowerCase();
+
+  if(activeStage === null){
+    section.innerHTML = `<div class="empty-state">Selecione uma etapa acima para ver os clientes.</div>`;
+    return;
+  }
+
+  const stage = ALL_STAGES.find(s => s.id === activeStage);
+  let items = DATA.filter(d => d.status === activeStage);
+
+  if(query){
+    items = items.filter(d =>
+      d.cliente.toLowerCase().includes(query) ||
+      (d.gestor || "").toLowerCase().includes(query)
+    );
+  }
+
+  let html = `<div class="detail-header">
+    <h2>Etapa ${stage.id} — ${stage.name}</h2>
+    <span class="badge">${items.length} cliente${items.length === 1 ? '' : 's'}</span>
+  </div>`;
+
+  if(items.length === 0){
+    html += `<div class="empty-state">Nenhum cliente encontrado nesta etapa.</div>`;
+  } else {
+    html += `<div class="grid">`;
+    items.forEach(item => {
+      html += `<div class="card" style="--stage-color:${stage.color}">
+        <div class="card-title">${item.cliente}</div>`;
+
+      if(item.agenda_label) html += agendaPill(item.agenda_label);
+
+      if(item.gestor){
+        html += `<div class="card-row"><span class="label">Responsável</span><span class="value">${item.gestor}</span></div>`;
+      }
+
+      const stack = stackTags(item);
+      if(stack){
+        html += `<div class="card-row"><span class="label">Stack</span>${stack}</div>`;
+      }
+
+      if(item.resumo){
+        html += `<div class="card-resumo">${item.resumo}</div>`;
+      }
+
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+
+  section.innerHTML = html;
+}
+
+document.getElementById('total-count').textContent = DATA.length;
+document.getElementById('updated-at').textContent = "15/06/2026";
+document.getElementById('contacted-count').textContent = DATA.filter(d => [4,5,6].includes(d.status)).length;
+
+document.getElementById('search').addEventListener('input', renderDetail);
+
+renderFlow();
+renderDetail();
+</script>
+
+</body>
+</html>
